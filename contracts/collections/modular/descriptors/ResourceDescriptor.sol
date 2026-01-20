@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import {IResourceDescriptor} from "../interfaces/IResourceDescriptor.sol";
-import {ResourceSVGLib} from "../../libraries/ResourceSVGLib.sol";
+import {ResourceSVGLib} from "../../../diamonds/modular/libraries/ResourceSVGLib.sol";
 
 /**
  * @title ResourceDescriptor

@@ -7,8 +7,8 @@ import {LibColonyWarsStorage} from "../libraries/LibColonyWarsStorage.sol";
 import {LibResourceStorage} from "../libraries/LibResourceStorage.sol";
 import {LibPremiumStorage} from "../libraries/LibPremiumStorage.sol";
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
-import {Achievement, AchievementProgress} from "../../libraries/GamingModel.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {Achievement, AchievementProgress} from "../../../libraries/GamingModel.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 
 /**
  * @title ColonyIntegrationFacet

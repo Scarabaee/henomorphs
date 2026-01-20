@@ -4,14 +4,14 @@ pragma solidity ^0.8.27;
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibAdoreChickenStorage} from "../libraries/LibAdoreChickenStorage.sol";
-import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {LibFeeCollection} from "../../staking/libraries/LibFeeCollection.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {SpecimenCollection} from "../../libraries/HenomorphsModel.sol";
-import {IExternalCollection} from "../interfaces/IStakingInterfaces.sol";
+import {AccessHelper} from "../../staking/libraries/AccessHelper.sol";
+import {SpecimenCollection} from "../../../libraries/HenomorphsModel.sol";
+import {IExternalCollection} from "../../staking/interfaces/IStakingInterfaces.sol";
 
 /**
  * @title AdoreChickenLaska

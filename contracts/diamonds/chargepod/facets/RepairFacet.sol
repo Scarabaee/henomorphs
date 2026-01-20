@@ -3,17 +3,17 @@ pragma solidity ^0.8.27;
 
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibColonyWarsStorage} from "../libraries/LibColonyWarsStorage.sol";
-import {LibBiopodIntegration} from "../libraries/LibBiopodIntegration.sol";
+import {LibBiopodIntegration} from "../../staking/libraries/LibBiopodIntegration.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {ControlFee, SpecimenCollection, PowerMatrix, Calibration} from "../../libraries/HenomorphsModel.sol";
-import {ISpecimenBiopod} from "../../interfaces/ISpecimenBiopod.sol";
-import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
+import {ControlFee, SpecimenCollection, PowerMatrix, Calibration} from "../../../libraries/HenomorphsModel.sol";
+import {ISpecimenBiopod} from "../../../interfaces/ISpecimenBiopod.sol";
+import {AccessHelper} from "../../staking/libraries/AccessHelper.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {LibFeeCollection} from "../../staking/libraries/LibFeeCollection.sol";
 import {ChargeCalculator} from "../libraries/ChargeCalculator.sol";
-import {IStakingSystem, IExternalCollection} from "../interfaces/IStakingInterfaces.sol";
+import {IStakingSystem, IExternalCollection} from "../../staking/interfaces/IStakingInterfaces.sol";
 
 /**
  * @title RepairFacet 

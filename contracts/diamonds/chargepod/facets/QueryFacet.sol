@@ -2,9 +2,9 @@
 pragma solidity ^0.8.27;
 
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {PowerMatrix, ChargeAccessory, ChargeSeason, SpecimenCollection, ChargeSettings, ChargeFees} from "../../libraries/HenomorphsModel.sol";
+import {PowerMatrix, ChargeAccessory, ChargeSeason, SpecimenCollection, ChargeSettings, ChargeFees} from "../../../libraries/HenomorphsModel.sol";
 
 /**
  * @title QueryFacet

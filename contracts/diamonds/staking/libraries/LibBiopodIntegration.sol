@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {LibHenomorphsStorage} from "./LibHenomorphsStorage.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
 import {LibStakingStorage} from "./LibStakingStorage.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
-import {LibTraitPackHelper} from "./LibTraitPackHelper.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
+import {LibTraitPackHelper} from "../../chargepod/libraries/LibTraitPackHelper.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {StakedSpecimen} from "../../libraries/StakingModel.sol";
-import {Calibration, ChargeAccessory, SpecimenCollection} from "../../libraries/HenomorphsModel.sol";
+import {StakedSpecimen} from "../../../libraries/StakingModel.sol";
+import {Calibration, ChargeAccessory, SpecimenCollection} from "../../../libraries/HenomorphsModel.sol";
 import {IExternalBiopod, IExternalAccessory, IExternalCollection} from "../interfaces/IStakingInterfaces.sol";
 
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {LibMeta} from "../shared/libraries/LibMeta.sol";
+import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {LibCollectionStorage} from "../libraries/LibCollectionStorage.sol";
 import {ModularConfigData, ModularConfigIndices, TokenAsset, EquippablePart, CompositionRequest, CompositionLayer, CrossCollectionPermission, LayerBlendMode} from "../libraries/ModularAssetModel.sol";

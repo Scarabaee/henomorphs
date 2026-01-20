@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 import {LibCollectionStorage} from "./LibCollectionStorage.sol";
-import {LibMeta} from "../shared/libraries/LibMeta.sol";
-import {LibDiamond} from "../shared/libraries/LibDiamond.sol";
+import {LibMeta} from "../../shared/libraries/LibMeta.sol";
+import {LibDiamond} from "../../shared/libraries/LibDiamond.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IStaking} from "../interfaces/IExternalSystems.sol"; 
 

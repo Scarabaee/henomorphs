@@ -3,14 +3,14 @@ pragma solidity ^0.8.27;
 
 import {LibColonyWarsStorage} from "./LibColonyWarsStorage.sol";
 import {LibHenomorphsStorage} from "./LibHenomorphsStorage.sol";
-import {LibFeeCollection} from "./LibFeeCollection.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
-import {PowerMatrix} from "../../libraries/HenomorphsModel.sol";
+import {LibFeeCollection} from "../../staking/libraries/LibFeeCollection.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
+import {PowerMatrix} from "../../../libraries/HenomorphsModel.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {LibDiamond} from "../../shared/libraries/LibDiamond.sol";
-import {IStakingCoreFacet} from "../interfaces/IStakingInterfaces.sol";
-import {StakedSpecimen} from "../../libraries/StakingModel.sol";
+import {IStakingCoreFacet} from "../../staking/interfaces/IStakingInterfaces.sol";
+import {StakedSpecimen} from "../../../libraries/StakingModel.sol";
     
 // Token stats structure (identical in both facets)
 struct TokenStats {

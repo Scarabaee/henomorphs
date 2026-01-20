@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {LibDiamond} from "../shared/libraries/LibDiamond.sol";
-import {LibCollectionStorage} from "../libraries/LibCollectionStorage.sol";
+import {LibCollectionStorage} from "./libraries/LibCollectionStorage.sol";
 import {IDiamondCut} from "../shared/interfaces/IDiamondCut.sol";
 import {IDiamondLoupe} from "../shared/interfaces/IDiamondLoupe.sol";
 import {IERC173} from "../shared/interfaces/IERC173.sol";

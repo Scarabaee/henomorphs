@@ -4,10 +4,10 @@ pragma solidity ^0.8.27;
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {LibColonyWarsStorage} from "../libraries/LibColonyWarsStorage.sol";
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {ColonyHelper} from "../libraries/ColonyHelper.sol";
-import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {ColonyHelper} from "../../staking/libraries/ColonyHelper.sol";
+import {AccessHelper} from "../../staking/libraries/AccessHelper.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 
 /**
  * @title ColonyTaskForceFacet

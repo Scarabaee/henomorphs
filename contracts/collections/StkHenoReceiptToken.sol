@@ -9,7 +9,7 @@ import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/U
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import {IStkHenoDescriptor} from "./interfaces/IStkHenoDescriptor.sol";
+import {IStkHenoDescriptor} from "../diamonds/staking/interfaces/IStkHenoDescriptor.sol";
 
 /**
  * @title IStakingEarningsFacet

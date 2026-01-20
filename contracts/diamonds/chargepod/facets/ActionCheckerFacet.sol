@@ -6,10 +6,10 @@ import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {ActionHelper} from "../libraries/ActionHelper.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
-import {ChargeActionType, PowerMatrix, ControlFee} from "../../libraries/HenomorphsModel.sol";
-import {UserEngagement, FlashParticipation, DailyChallengeSet, AchievementProgress} from "../../libraries/GamingModel.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
+import {ChargeActionType, PowerMatrix, ControlFee} from "../../../libraries/HenomorphsModel.sol";
+import {UserEngagement, FlashParticipation, DailyChallengeSet, AchievementProgress} from "../../../libraries/GamingModel.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 
 /**
  * @title ActionCheckerFacet

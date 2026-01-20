@@ -4,13 +4,13 @@ pragma solidity ^0.8.27;
 import {LibStakingStorage} from "../libraries/LibStakingStorage.sol";
 import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
 import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import {StakedSpecimen} from "../../libraries/StakingModel.sol";
-import {SpecimenCollection, ControlFee} from "../../libraries/HenomorphsModel.sol";
+import {StakedSpecimen} from "../../../libraries/StakingModel.sol";
+import {SpecimenCollection, ControlFee} from "../../../libraries/HenomorphsModel.sol";
 import {IStakingBiopodFacet, IStakingIntegrationFacet, IExternalCollection} from "../interfaces/IStakingInterfaces.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 
 /**
  * @title IStkHenoReceiptToken

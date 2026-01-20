@@ -4,12 +4,12 @@ pragma solidity ^0.8.27;
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {ChargeSeason, SpecimenCollection} from "../../libraries/HenomorphsModel.sol";
-import {ScheduledEvent, UserEngagement} from "../../libraries/GamingModel.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {IRankingFacet} from "../interfaces/IStakingInterfaces.sol";
+import {ChargeSeason, SpecimenCollection} from "../../../libraries/HenomorphsModel.sol";
+import {ScheduledEvent, UserEngagement} from "../../../libraries/GamingModel.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {IRankingFacet} from "../../staking/interfaces/IStakingInterfaces.sol";
 
 /**
 * @title SeasonFacet

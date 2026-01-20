@@ -2,8 +2,8 @@
 pragma solidity ^0.8.27;
 
 import {LibStakingStorage} from "../libraries/LibStakingStorage.sol";
-import {PodRewardRate, InfusionBonus} from "../../libraries/StakingModel.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {PodRewardRate, InfusionBonus} from "../../../libraries/StakingModel.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 
 /**
  * @title StakingRewardConfigurationFacet

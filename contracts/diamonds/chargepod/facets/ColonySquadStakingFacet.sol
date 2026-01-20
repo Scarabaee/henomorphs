@@ -3,13 +3,13 @@ pragma solidity ^0.8.27;
 
 import { LibHenomorphsStorage } from "../libraries/LibHenomorphsStorage.sol";
 import { LibColonyWarsStorage } from "../libraries/LibColonyWarsStorage.sol";
-import { ColonyHelper } from "../libraries/ColonyHelper.sol";
-import { AccessControlBase } from "./AccessControlBase.sol";
-import { AccessHelper } from "../libraries/AccessHelper.sol";
-import { PodsUtils } from "../../libraries/PodsUtils.sol";
+import { ColonyHelper } from "../../staking/libraries/ColonyHelper.sol";
+import { AccessControlBase } from "../../common/facets/AccessControlBase.sol";
+import { AccessHelper } from "../../staking/libraries/AccessHelper.sol";
+import { PodsUtils } from "../../../libraries/PodsUtils.sol";
 import { LibMeta } from "../../shared/libraries/LibMeta.sol";
 import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import { IColonyResourceCards } from "../interfaces/IColonyResourceCards.sol";
+import { IColonyResourceCards } from "../../staking/interfaces/IColonyResourceCards.sol";
 
 /**
  * @title ColonySquadStakingFacet

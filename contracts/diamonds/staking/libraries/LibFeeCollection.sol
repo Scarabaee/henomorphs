@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {LibHenomorphsStorage} from "./LibHenomorphsStorage.sol";
-import {LibColonyWarsStorage} from "./LibColonyWarsStorage.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
+import {LibColonyWarsStorage} from "../../chargepod/libraries/LibColonyWarsStorage.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {LibStakingStorage} from "./LibStakingStorage.sol";
-import {ControlFee} from "../../libraries/HenomorphsModel.sol";
+import {ControlFee} from "../../../libraries/HenomorphsModel.sol";
 
 /**
  * @notice Interface for YELLOW token burn functionality
@@ -91,7 +91,7 @@ library LibFeeCollection {
      * @notice Collect fee to treasury and immediately burn it
      * @param currency Token contract (YELLOW)
      * @param payer Address paying the fee
-     * @param treasury Treasury address
+     * @param treasury Treasury address (unused, kept for interface compatibility)
      * @param amount Amount to collect and burn
      * @param operation Operation identifier for events
      */
@@ -103,25 +103,24 @@ library LibFeeCollection {
         string memory operation
     ) internal {
         if (amount == 0) return;
-        
+
         // Validation
         uint256 balance = currency.balanceOf(payer);
         if (balance < amount) {
             revert InsufficientBalance(address(currency), amount, balance);
         }
-        
+
         uint256 allowance = currency.allowance(payer, address(this));
         if (allowance < amount) {
             revert InsufficientAllowance(address(currency), amount, allowance);
         }
-        
-        // Collect to treasury
-        currency.safeTransferFrom(payer, treasury, amount);
-        emit FeeCollected(payer, treasury, amount, operation);
-        
-        // Burn from treasury
-        IYellowToken(address(currency)).burnFrom(treasury, amount, operation);
-        emit FeeBurned(treasury, amount, operation);
+
+        // Burn directly from payer (requires contract to be burner in YELLOW token)
+        IYellowToken(address(currency)).burnFrom(payer, amount, operation);
+        emit FeeBurned(payer, amount, operation);
+
+        // Suppress unused variable warning
+        treasury;
     }
 
     /**

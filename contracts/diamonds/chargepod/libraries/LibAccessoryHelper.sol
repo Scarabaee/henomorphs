@@ -2,8 +2,8 @@
 pragma solidity ^0.8.27;
 
 import {LibHenomorphsStorage} from "./LibHenomorphsStorage.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
-import {ChargeAccessory, PowerMatrix} from "../../libraries/HenomorphsModel.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
+import {ChargeAccessory, PowerMatrix} from "../../../libraries/HenomorphsModel.sol";
 import {LibTraitPackHelper} from "./LibTraitPackHelper.sol";
 
 /**

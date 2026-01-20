@@ -4,7 +4,7 @@ pragma solidity ^0.8.27;
 import {LibStakingStorage} from "../libraries/LibStakingStorage.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 
 /**
  * @title StakingLoyaltyProgramFacet

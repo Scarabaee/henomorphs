@@ -237,17 +237,5 @@ struct PowerMatrix {
     uint256 seasonPoints;     // Points earned in current season
 }
 
-/**
- * @notice Structure for comprehensive equipment data transfer
- * @dev Contains all necessary information about trait packs and accessories
- */
-struct TraitPackEquipment {
-    address traitPackCollection; // Address of the trait pack collection
-    uint256 traitPackTokenId;    // Token ID of the active trait pack (0 if none)
-    uint64[] accessoryIds;       // List of accessory asset IDs
-    uint8 tier;
-    uint8 variant;
-    uint256 assignmentTime;
-    uint256 unlockTime;
-    bool locked;
-}
+// TraitPackEquipment is imported from HenomorphsModel.sol to avoid type conflicts
+import {TraitPackEquipment} from "../../../libraries/HenomorphsModel.sol";

@@ -328,7 +328,8 @@ enum CollectionType {
     Modular,        // Full RMRK collections
     Catalog,        // Part definitions
     Nestable,       // Parent-child collections
-    Equippable      // Equipment collections
+    Equippable,     // Equipment collections
+    Realm           // Realm collections - Mission Pass (M prefix)
 }
 
 struct AssetCombination {

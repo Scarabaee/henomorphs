@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {LibCollectionStorage} from "../libraries/LibCollectionStorage.sol";
-import {LibMeta} from "../shared/libraries/LibMeta.sol";
+import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {AccessControlBase} from "./AccessControlBase.sol";
 import {ISpecimenCollection} from "../interfaces/IExternalSystems.sol";
 import {PartType, EquippablePart} from "../libraries/ModularAssetModel.sol";

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
-import {StakedSpecimen} from "../../libraries/StakingModel.sol";
-import {Calibration, ChargeAccessory, PowerMatrix, ColonyCriteria, TraitPackEquipment, ChargeSeason} from "../../libraries/HenomorphsModel.sol";
-import {RankingConfig, RankingEntry} from "../../libraries/GamingModel.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
+import {StakedSpecimen} from "../../../libraries/StakingModel.sol";
+import {Calibration, ChargeAccessory, PowerMatrix, ColonyCriteria, TraitPackEquipment, ChargeSeason} from "../../../libraries/HenomorphsModel.sol";
+import {RankingConfig, RankingEntry} from "../../../libraries/GamingModel.sol";
 
 /**
  * @title IStakingWearFacet

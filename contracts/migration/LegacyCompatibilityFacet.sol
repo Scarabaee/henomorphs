@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {LibDiamond} from "../v4.3/henomorphsv1/modular/libraries/LibDiamond.sol";
+import {LibDiamond} from "../diamonds/shared/libraries/LibDiamond.sol";
 
 /**
  * @title LegacyCompatibilityFacet

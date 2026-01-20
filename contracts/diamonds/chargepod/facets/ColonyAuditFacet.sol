@@ -2,12 +2,12 @@
 pragma solidity ^0.8.27;
 
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
-import {ColonyHelper} from "../libraries/ColonyHelper.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
+import {ColonyHelper} from "../../staking/libraries/ColonyHelper.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {IStakingSystem} from "../interfaces/IStakingInterfaces.sol";
+import {AccessHelper} from "../../staking/libraries/AccessHelper.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {IStakingSystem} from "../../staking/interfaces/IStakingInterfaces.sol";
 
 /**
  * @title ColonyAuditFacet

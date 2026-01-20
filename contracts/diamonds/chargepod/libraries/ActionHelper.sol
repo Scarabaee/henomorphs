@@ -4,9 +4,9 @@ pragma solidity ^0.8.27;
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {LibHenomorphsStorage} from "./LibHenomorphsStorage.sol";
 import {LibGamingStorage} from "./LibGamingStorage.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
-import {UserEngagement} from "../../libraries/GamingModel.sol";
-import {ChargeSeason, ChargeActionType} from "../../libraries/HenomorphsModel.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
+import {UserEngagement} from "../../../libraries/GamingModel.sol";
+import {ChargeSeason, ChargeActionType} from "../../../libraries/HenomorphsModel.sol";
 
 /**
  * @title ActionHelper - FIXED VERSION

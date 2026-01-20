@@ -2,7 +2,7 @@
 pragma solidity ^0.8.27;
 
 import {LibResourceStorage} from "../libraries/LibResourceStorage.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 
 /**
  * @title ResourceDecayFacet

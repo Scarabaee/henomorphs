@@ -7,7 +7,7 @@ import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {AccessControlBase} from "./AccessControlBase.sol";
 import {LibCollectionStorage} from "../libraries/LibCollectionStorage.sol";
 import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
-import {LibMeta} from "../shared/libraries/LibMeta.sol";
+import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 
     // ==================== INTERFACES ====================
 

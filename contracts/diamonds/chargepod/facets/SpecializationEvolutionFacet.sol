@@ -5,13 +5,13 @@ import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibColonyWarsStorage} from "../libraries/LibColonyWarsStorage.sol";
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import {PowerMatrix, ChargeSeason, SpecimenCollection} from "../../libraries/HenomorphsModel.sol";
-import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
+import {PowerMatrix, ChargeSeason, SpecimenCollection} from "../../../libraries/HenomorphsModel.sol";
+import {AccessHelper} from "../../staking/libraries/AccessHelper.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {LibFeeCollection} from "../../staking/libraries/LibFeeCollection.sol";
 
 /**
  * @title SpecializationEvolutionFacet - Hybrid Approach

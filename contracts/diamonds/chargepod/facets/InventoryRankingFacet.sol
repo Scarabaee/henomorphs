@@ -3,11 +3,11 @@ pragma solidity ^0.8.27;
 
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {ChargeAccessory, SpecimenCollection, Calibration} from "../../libraries/HenomorphsModel.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {ChargeAccessory, SpecimenCollection, Calibration} from "../../../libraries/HenomorphsModel.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {IChargeFacet, IExternalBiopod, IExternalCollection, IExternalAccessory, IStakingSystem} from "../interfaces/IStakingInterfaces.sol";
+import {IChargeFacet, IExternalBiopod, IExternalCollection, IExternalAccessory, IStakingSystem} from "../../staking/interfaces/IStakingInterfaces.sol";
 import {LibTraitPackHelper} from "../libraries/LibTraitPackHelper.sol";
 import {LibDiamond} from "../../shared/libraries/LibDiamond.sol";
 

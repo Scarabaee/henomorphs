@@ -8,7 +8,7 @@ import {IDiamondLoupe} from "../../shared/interfaces/IDiamondLoupe.sol";
 import {IDiamondCut} from "../../shared/interfaces/IDiamondCut.sol";
 import {IERC173} from "../../shared/interfaces/IERC173.sol";
 import {IERC165} from "../../shared/interfaces/IERC165.sol";
-import {ChargeSettings, ControlFee, ChargeFees, ChargeActionType, ChargeSeason} from "../../libraries/HenomorphsModel.sol";
+import {ChargeSettings, ControlFee, ChargeFees, ChargeActionType, ChargeSeason} from "../../../libraries/HenomorphsModel.sol";
 
 /**
  * @title ChargepodDiamondInit

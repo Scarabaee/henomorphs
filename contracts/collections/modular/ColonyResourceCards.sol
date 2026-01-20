@@ -9,8 +9,8 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
-import {ModularSpecimen} from "../base/ModularSpecimen.sol";
-import {ResourceSVGLib} from "../libraries/ResourceSVGLib.sol";
+import {ModularSpecimen} from "../../diamonds/modular/base/ModularSpecimen.sol";
+import {ResourceSVGLib} from "../../diamonds/modular/libraries/ResourceSVGLib.sol";
 import {IResourceDescriptor} from "./interfaces/IResourceDescriptor.sol";
 
 /**

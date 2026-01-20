@@ -3,9 +3,9 @@ pragma solidity ^0.8.27;
 
 import {LibMissionStorage} from "../libraries/LibMissionStorage.sol";
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
-import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {ControlFee} from "../../libraries/HenomorphsModel.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {AccessHelper} from "../../staking/libraries/AccessHelper.sol";
+import {ControlFee} from "../../../libraries/HenomorphsModel.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
@@ -30,6 +30,7 @@ contract MissionConfigFacet is AccessControlBase {
         string name
     );
     event MissionPassCollectionEnabled(uint16 indexed collectionId, bool enabled);
+    event MissionPassEligibleCollectionsUpdated(uint16 indexed collectionId, uint16[] eligibleCollections);
     event MissionVariantConfigured(
         uint16 indexed collectionId,
         uint8 indexed variantId,
@@ -37,6 +38,15 @@ contract MissionConfigFacet is AccessControlBase {
         uint256 baseReward
     );
     event MissionVariantEnabled(uint16 indexed collectionId, uint8 indexed variantId, bool enabled);
+
+    // Recharge events
+    event RechargeConfigSet(uint16 indexed collectionId, uint96 pricePerUse, uint16 discountBps);
+    event RechargeEnabled(uint16 indexed collectionId, bool enabled);
+    event RechargeSystemPaused(bool paused);
+
+    // Lending events
+    event LendingConfigSet(address indexed paymentToken, uint16 platformFeeBps);
+    event LendingSystemPaused(bool paused);
 
     // ============================================================
     // ERRORS
@@ -52,6 +62,16 @@ contract MissionConfigFacet is AccessControlBase {
     error InvalidMapSize();
     error TooManyVariants();
     error VariantNotConfigured(uint16 collectionId, uint8 variantId);
+
+    // Recharge errors
+    error InvalidRechargeConfig();
+    error DiscountTooHigh();
+
+    // Lending errors
+    error InvalidLendingConfig();
+    error PlatformFeeTooHigh();
+    error InvalidDurationRange();
+    error RewardShareTooHigh();
 
     // ============================================================
     // SYSTEM CONFIGURATION
@@ -204,6 +224,27 @@ contract MissionConfigFacet is AccessControlBase {
         }
 
         ms.passCollections[collectionId].entryFee = entryFee;
+    }
+
+    /**
+     * @notice Update eligible Henomorph collections for a Mission Pass collection
+     * @dev Sets which Henomorph collections can participate in missions using this pass
+     * @param collectionId Mission Pass collection ID to modify
+     * @param eligibleCollections Array of Henomorph collection IDs that can participate
+     */
+    function setMissionPassEligibleCollections(
+        uint16 collectionId,
+        uint16[] calldata eligibleCollections
+    ) external onlyAuthorized whenNotPaused {
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+
+        if (collectionId == 0 || collectionId > ms.passCollectionCounter) {
+            revert CollectionNotRegistered(collectionId);
+        }
+
+        ms.passCollections[collectionId].eligibleCollections = eligibleCollections;
+
+        emit MissionPassEligibleCollectionsUpdated(collectionId, eligibleCollections);
     }
 
     /**
@@ -450,6 +491,48 @@ contract MissionConfigFacet is AccessControlBase {
     }
 
     /**
+     * @notice Get eligible Henomorph collections for a Mission Pass collection
+     * @param collectionId Mission Pass collection ID
+     * @return eligibleCollections Array of Henomorph collection IDs that can participate
+     */
+    function getMissionPassEligibleCollections(uint16 collectionId)
+        external
+        view
+        returns (uint16[] memory eligibleCollections)
+    {
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+        if (collectionId == 0 || collectionId > ms.passCollectionCounter) {
+            revert CollectionNotRegistered(collectionId);
+        }
+        return ms.passCollections[collectionId].eligibleCollections;
+    }
+
+    /**
+     * @notice Check if a Henomorph collection is eligible for a Mission Pass collection
+     * @param passCollectionId Mission Pass collection ID
+     * @param henomorphCollectionId Henomorph collection ID to check
+     * @return isEligible True if the Henomorph collection can participate
+     */
+    function isHenomorphCollectionEligible(uint16 passCollectionId, uint16 henomorphCollectionId)
+        external
+        view
+        returns (bool isEligible)
+    {
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+        if (passCollectionId == 0 || passCollectionId > ms.passCollectionCounter) {
+            revert CollectionNotRegistered(passCollectionId);
+        }
+
+        uint16[] storage eligible = ms.passCollections[passCollectionId].eligibleCollections;
+        for (uint256 i = 0; i < eligible.length; i++) {
+            if (eligible[i] == henomorphCollectionId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @notice Get global mission statistics
      * @return totalCreated Total missions created
      * @return totalCompleted Total missions completed
@@ -466,5 +549,201 @@ contract MissionConfigFacet is AccessControlBase {
             ms.totalSessionsCompleted,
             ms.totalSessionsFailed
         );
+    }
+
+    // ============================================================
+    // RECHARGE CONFIGURATION
+    // ============================================================
+
+    /**
+     * @notice Configure recharge settings for a Mission Pass collection
+     * @param collectionId Collection ID to configure
+     * @param paymentToken ERC20 token for recharge payments
+     * @param paymentBeneficiary Address receiving recharge payments
+     * @param pricePerUse Price per use in payment token (wei)
+     * @param discountBps Discount in basis points (0-10000, e.g., 1000 = 10% off)
+     * @param maxRechargePerTx Maximum uses rechargeable per transaction (0 = unlimited)
+     * @param cooldownSeconds Cooldown between recharges in seconds
+     * @param burnOnCollect Whether to burn tokens instead of transferring
+     */
+    function setPassRechargeConfig(
+        uint16 collectionId,
+        address paymentToken,
+        address paymentBeneficiary,
+        uint96 pricePerUse,
+        uint16 discountBps,
+        uint16 maxRechargePerTx,
+        uint32 cooldownSeconds,
+        bool burnOnCollect
+    ) external onlyAuthorized whenNotPaused {
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+
+        if (collectionId == 0 || collectionId > ms.passCollectionCounter) {
+            revert CollectionNotRegistered(collectionId);
+        }
+        if (paymentToken == address(0) || paymentBeneficiary == address(0)) {
+            revert InvalidRechargeConfig();
+        }
+        if (pricePerUse == 0) {
+            revert InvalidRechargeConfig();
+        }
+        if (discountBps > 10000) {
+            revert DiscountTooHigh();
+        }
+
+        ms.passRechargeConfigs[collectionId] = LibMissionStorage.RechargeConfig({
+            paymentToken: paymentToken,
+            paymentBeneficiary: paymentBeneficiary,
+            pricePerUse: pricePerUse,
+            discountBps: discountBps,
+            maxRechargePerTx: maxRechargePerTx,
+            cooldownSeconds: cooldownSeconds,
+            enabled: true,
+            burnOnCollect: burnOnCollect
+        });
+
+        emit RechargeConfigSet(collectionId, pricePerUse, discountBps);
+    }
+
+    /**
+     * @notice Enable or disable recharge for a collection
+     * @param collectionId Collection ID to modify
+     * @param enabled New enabled state
+     */
+    function setPassRechargeEnabled(uint16 collectionId, bool enabled) external onlyAuthorized whenNotPaused {
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+
+        if (collectionId == 0 || collectionId > ms.passCollectionCounter) {
+            revert CollectionNotRegistered(collectionId);
+        }
+
+        ms.passRechargeConfigs[collectionId].enabled = enabled;
+        emit RechargeEnabled(collectionId, enabled);
+    }
+
+    /**
+     * @notice Pause or unpause the recharge system globally
+     * @param paused New pause state
+     */
+    function setPassRechargeSystemPaused(bool paused) external onlyAuthorized {
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+        ms.rechargeSystemPaused = paused;
+        emit RechargeSystemPaused(paused);
+    }
+
+    /**
+     * @notice Get recharge configuration for a collection
+     * @param collectionId Collection ID
+     * @return config Recharge configuration
+     */
+    function getPassRechargeConfig(uint16 collectionId)
+        external
+        view
+        returns (LibMissionStorage.RechargeConfig memory config)
+    {
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+        if (collectionId == 0 || collectionId > ms.passCollectionCounter) {
+            revert CollectionNotRegistered(collectionId);
+        }
+        return ms.passRechargeConfigs[collectionId];
+    }
+
+    /**
+     * @notice Check if recharge system is paused
+     * @return paused Current pause state
+     */
+    function isPassRechargeSystemPaused() external view returns (bool paused) {
+        return LibMissionStorage.missionStorage().rechargeSystemPaused;
+    }
+
+    // ============================================================
+    // LENDING CONFIGURATION
+    // ============================================================
+
+    /**
+     * @notice Configure global lending system settings
+     * @param paymentToken ERC20 token for lending payments and collateral
+     * @param beneficiary Address receiving platform fees
+     * @param platformFeeBps Platform fee in basis points (max 1000 = 10%)
+     * @param minDuration Minimum rental duration in seconds
+     * @param maxDuration Maximum rental duration in seconds
+     * @param maxRewardShareBps Maximum reward share for lender (max 5000 = 50%)
+     * @param burnPlatformFee If true, burn platform fee instead of transfer (for YLW tokens)
+     */
+    function setPassLendingConfig(
+        address paymentToken,
+        address beneficiary,
+        uint16 platformFeeBps,
+        uint32 minDuration,
+        uint32 maxDuration,
+        uint16 maxRewardShareBps,
+        bool burnPlatformFee
+    ) external onlyAuthorized whenNotPaused {
+        if (paymentToken == address(0) || beneficiary == address(0)) {
+            revert InvalidLendingConfig();
+        }
+        if (platformFeeBps > 1000) { // Max 10% platform fee
+            revert PlatformFeeTooHigh();
+        }
+        if (minDuration >= maxDuration || maxDuration == 0) {
+            revert InvalidDurationRange();
+        }
+        if (maxRewardShareBps > 5000) { // Max 50% reward share
+            revert RewardShareTooHigh();
+        }
+
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+
+        ms.lendingConfig = LibMissionStorage.LendingConfig({
+            paymentToken: paymentToken,
+            beneficiary: beneficiary,
+            platformFeeBps: platformFeeBps,
+            minDuration: minDuration,
+            maxDuration: maxDuration,
+            maxRewardShareBps: maxRewardShareBps,
+            enabled: true,
+            burnPlatformFee: burnPlatformFee
+        });
+
+        emit LendingConfigSet(paymentToken, platformFeeBps);
+    }
+
+    /**
+     * @notice Enable or disable the lending system globally
+     * @param enabled New enabled state
+     */
+    function setPassLendingEnabled(bool enabled) external onlyAuthorized whenNotPaused {
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+        ms.lendingConfig.enabled = enabled;
+    }
+
+    /**
+     * @notice Pause or unpause the lending system globally
+     * @param paused New pause state
+     */
+    function setPassLendingSystemPaused(bool paused) external onlyAuthorized {
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+        ms.lendingSystemPaused = paused;
+        emit LendingSystemPaused(paused);
+    }
+
+    /**
+     * @notice Get lending system configuration
+     * @return config Lending configuration
+     */
+    function getPassLendingConfig()
+        external
+        view
+        returns (LibMissionStorage.LendingConfig memory config)
+    {
+        return LibMissionStorage.missionStorage().lendingConfig;
+    }
+
+    /**
+     * @notice Check if lending system is paused
+     * @return paused Current pause state
+     */
+    function isPassLendingSystemPaused() external view returns (bool paused) {
+        return LibMissionStorage.missionStorage().lendingSystemPaused;
     }
 }

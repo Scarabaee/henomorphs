@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import {IssuePhase, IssueInfo, ItemTier, TierVariant} from "../libraries/CollectionModel.sol";
 import {LibCollectionStorage} from "../libraries/LibCollectionStorage.sol";
-import {LibMeta} from "../shared/libraries/LibMeta.sol";
+import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
 import {AccessControlBase} from "./AccessControlBase.sol";
 import {AccessHelper} from "../libraries/AccessHelper.sol";

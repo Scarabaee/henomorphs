@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {LibHenomorphsStorage} from "./LibHenomorphsStorage.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
 import {LibStakingStorage} from "./LibStakingStorage.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import {SpecimenCollection, ColonyCriteria, PowerMatrix} from "../../libraries/HenomorphsModel.sol"; 
+import {SpecimenCollection, ColonyCriteria, PowerMatrix} from "../../../libraries/HenomorphsModel.sol"; 
 import {LibDiamond} from "../../shared/libraries/LibDiamond.sol";
 import {AccessHelper} from "./AccessHelper.sol";
 import {IStakingSystem, IChargeFacet, IExternalCollection, IStakingCoreFacet} from "../interfaces/IStakingInterfaces.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
-import {StakedSpecimen} from "../../libraries/StakingModel.sol";
+import {StakedSpecimen} from "../../../libraries/StakingModel.sol";
 
 /**
  * @title ColonyHelper

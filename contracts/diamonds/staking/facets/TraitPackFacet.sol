@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
 import {LibStakingStorage} from "../libraries/LibStakingStorage.sol";
-import {LibTraitPackHelper} from "../libraries/LibTraitPackHelper.sol";
+import {LibTraitPackHelper} from "../../chargepod/libraries/LibTraitPackHelper.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {LibDiamond} from "../../shared/libraries/LibDiamond.sol";
 import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
-import {TraitPack, TraitPackEquipment, SpecimenCollection} from "../../libraries/HenomorphsModel.sol";
-import {StakedSpecimen} from "../../libraries/StakingModel.sol";
-import {ModularAssetModel} from "../../libraries/ModularAssetModel.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
+import {TraitPack, TraitPackEquipment, SpecimenCollection} from "../../../libraries/HenomorphsModel.sol";
+import {StakedSpecimen} from "../../../libraries/StakingModel.sol";
+import {ModularAssetModel} from "../../../libraries/ModularAssetModel.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 import {IExternalCollection} from "../interfaces/IStakingInterfaces.sol";
 import {ICollectionDiamond} from "../../modular/interfaces/ICollectionDiamond.sol";
 

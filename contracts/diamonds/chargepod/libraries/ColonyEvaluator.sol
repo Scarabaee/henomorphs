@@ -2,10 +2,10 @@
 pragma solidity ^0.8.27;
 
 import {LibHenomorphsStorage} from "./LibHenomorphsStorage.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {ChargeAccessory, SpecimenCollection} from "../../libraries/HenomorphsModel.sol";
-import {IExternalAccessory, IExternalCollection, IChargeFacet} from "../interfaces/IStakingInterfaces.sol";
+import {ChargeAccessory, SpecimenCollection} from "../../../libraries/HenomorphsModel.sol";
+import {IExternalAccessory, IExternalCollection, IChargeFacet} from "../../staking/interfaces/IStakingInterfaces.sol";
 
 /**
  * @title ColonyEvaluator

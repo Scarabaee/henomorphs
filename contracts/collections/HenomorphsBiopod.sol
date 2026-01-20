@@ -9,10 +9,10 @@ import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
-import "../common/CollectionModel.sol";
-import "./libraries/HenomorphsModel.sol";
-import "./interfaces/ISpecimenBiopod.sol";
-import "./interfaces/ISpecimenCollection.sol";
+import "../libraries/CollectionModel.sol";
+import "../libraries/HenomorphsModel.sol";
+import "../interfaces/ISpecimenBiopod.sol";
+import "../interfaces/ISpecimenCollection.sol";
 
 /**
  * @notice Interface for YELLOW token burn functionality

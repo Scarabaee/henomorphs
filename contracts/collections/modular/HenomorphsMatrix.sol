@@ -10,11 +10,11 @@ import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Ini
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
-import {LibCollectionStorage} from "../libraries/LibCollectionStorage.sol";
-import {ModularSpecimen} from "../base/ModularSpecimen.sol";
-import {ISpecimenCollection, IStaking} from "../interfaces/IExternalSystems.sol";
-import {IssueInfo, ItemTier, TierVariant, TraitPackEquipment} from"../libraries/CollectionModel.sol";
-import {ICollectionDiamond} from "../interfaces/ICollectionDiamond.sol";
+import {LibCollectionStorage} from "../../diamonds/modular/libraries/LibCollectionStorage.sol";
+import {ModularSpecimen} from "../../diamonds/modular/base/ModularSpecimen.sol";
+import {ISpecimenCollection, IStaking} from "../../diamonds/modular/interfaces/IExternalSystems.sol";
+import {IssueInfo, ItemTier, TierVariant, TraitPackEquipment} from "../../diamonds/modular/libraries/CollectionModel.sol";
+import {ICollectionDiamond} from "../../diamonds/modular/interfaces/ICollectionDiamond.sol";
 
 /**
  * @title HenomorphsMatrix

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.27;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ControlFee} from "../../libraries/HenomorphsModel.sol";
+import {ControlFee} from "../../../libraries/HenomorphsModel.sol";
 
 /**
  * @title LibMissionStorage
@@ -109,6 +109,16 @@ library LibMissionStorage {
         Negotiate
     }
 
+    /**
+     * @notice Mission Pass status - distinguishes "never used" from "exhausted"
+     * @dev Solves the problem where remaining=0 could mean either first use or depleted
+     */
+    enum PassStatus {
+        Uninitialized,  // 0 - Never used, will get full uses on first mission
+        Active,         // 1 - Has remaining uses
+        Exhausted       // 2 - All uses consumed, can be recharged
+    }
+
     // ============================================================
     // PACKED STORAGE STRUCTURES (gas optimized)
     // ============================================================
@@ -194,6 +204,98 @@ library LibMissionStorage {
      */
     struct PackedObjectives {
         uint256 objectives;
+    }
+
+    // ============================================================
+    // RECHARGE STRUCTURES
+    // ============================================================
+
+    /**
+     * @notice Configuration for Mission Pass recharge functionality
+     * @dev Allows users to purchase additional uses for their Mission Pass
+     */
+    struct RechargeConfig {
+        address paymentToken;          // Token used for payment (ERC20)
+        address paymentBeneficiary;    // Recipient of recharge payments
+        uint96 pricePerUse;            // Price for one use (in payment token)
+        uint16 discountBps;            // Discount in basis points (0-10000, e.g., 1000 = 10% off)
+        uint16 maxRechargePerTx;       // Maximum uses that can be recharged in single tx (0 = unlimited)
+        uint32 cooldownSeconds;        // Cooldown between recharges (0 = no cooldown)
+        bool enabled;                  // Is recharge enabled for this collection
+        bool burnOnCollect;            // Burn tokens instead of transfer
+    }
+
+    /**
+     * @notice Record of recharge history for a specific Mission Pass token
+     */
+    struct PassRechargeRecord {
+        uint32 lastRechargeTime;       // Timestamp of last recharge
+        uint16 totalRecharges;         // Total number of recharge transactions
+        uint16 totalUsesRecharged;     // Total uses added through recharges
+    }
+
+    // ============================================================
+    // LENDING STRUCTURES (ERC-4907 + Delegate.xyz inspired)
+    // ============================================================
+
+    /**
+     * @notice Delegation record - inspired by ERC-4907 + Delegate.xyz
+     * @dev Implements auto-expiry pattern: delegateeOf() returns address(0) when expired
+     */
+    struct PassDelegation {
+        // Slot 1 (256 bits) - packed: 20 + 8 + 2 + 2 = 32 bytes
+        address delegatee;             // Who has usage rights (20 bytes)
+        uint64 expires;                // Unix timestamp of expiration - like ERC-4907 (8 bytes)
+        uint16 usesAllowed;            // Use limit (0 = unlimited within time) (2 bytes)
+        uint16 usesConsumed;           // Uses consumed by delegatee (2 bytes)
+
+        // Slot 2 (256 bits) - financial terms
+        uint96 flatFeeTotal;           // Total flat fee paid (12 bytes)
+        uint16 rewardShareBps;         // % of rewards for delegator (0 = flat fee only) (2 bytes)
+        uint96 collateralAmount;       // Deposited collateral (0 = none) (12 bytes)
+        bool collateralReturned;       // Whether collateral was returned (1 byte)
+        // 3 bytes padding
+
+        // Slot 3 (256 bits) - auto-renew
+        address lender;                // Original owner/lender address (20 bytes)
+        uint96 autoRenewDeposit;       // Deposit for auto-renewal (12 bytes)
+    }
+
+    /**
+     * @notice Listing offer for lending a Mission Pass
+     * @dev Lender creates offer, borrower accepts with specified terms
+     */
+    struct PassLendingOffer {
+        // Slot 1 (256 bits)
+        address owner;                 // Pass owner (20 bytes)
+        uint96 flatFeePerUse;          // Price per use (flat fee mode) (12 bytes)
+
+        // Slot 2 (256 bits)
+        uint16 rewardShareBps;         // % of rewards (revenue share mode, 0 = disabled) (2 bytes)
+        uint32 minDuration;            // Minimum rental duration (seconds) (4 bytes)
+        uint32 maxDuration;            // Maximum rental duration (seconds) (4 bytes)
+        uint16 minUses;                // Minimum uses to rent (2 bytes)
+        uint16 maxUses;                // Maximum uses to rent (2 bytes)
+        uint64 offerExpires;           // When offer expires (8 bytes)
+        uint96 collateralRequired;     // Required collateral (0 = none, inspired by ReNFT) (12 bytes)
+
+        // Slot 3
+        bool active;                   // Is offer active (1 byte)
+        // 31 bytes padding
+    }
+
+    /**
+     * @notice Global lending system configuration
+     */
+    struct LendingConfig {
+        address paymentToken;          // Token for payments/collateral (ERC20)
+        address beneficiary;           // Platform fee recipient (20 bytes)
+        uint16 platformFeeBps;         // Platform fee (max 1000 = 10%) (2 bytes)
+        uint32 minDuration;            // Global minimum rental duration (4 bytes)
+        uint32 maxDuration;            // Global maximum rental duration (4 bytes)
+        uint16 maxRewardShareBps;      // Max reward share for lender (e.g., 5000 = 50%) (2 bytes)
+        bool enabled;                  // Is lending system enabled (1 byte)
+        bool burnPlatformFee;          // Burn platform fee instead of transfer (for YLW tokens)
     }
 
     // ============================================================
@@ -436,6 +538,38 @@ library LibMissionStorage {
         address rewardToken;
         address feeRecipient;
         uint16 feeBps;              // Fee basis points (e.g., 500 = 5%)
+
+        // ============ RECHARGE SYSTEM (added for Mission Pass recharge) ============
+        // Recharge configs: collectionId => RechargeConfig
+        mapping(uint16 => RechargeConfig) passRechargeConfigs;
+
+        // Pass status tracking: collectionId => tokenId => PassStatus
+        mapping(uint16 => mapping(uint256 => PassStatus)) passStatus;
+
+        // Recharge records: collectionId => tokenId => PassRechargeRecord
+        mapping(uint16 => mapping(uint256 => PassRechargeRecord)) passRechargeRecords;
+
+        // Recharge system pause flag
+        bool rechargeSystemPaused;
+
+        // ============ LENDING SYSTEM (ERC-4907 + Delegate.xyz inspired) ============
+        // Global lending configuration
+        LendingConfig lendingConfig;
+
+        // Lending offers: collectionId => tokenId => PassLendingOffer
+        mapping(uint16 => mapping(uint256 => PassLendingOffer)) passLendingOffers;
+
+        // Active delegations: collectionId => tokenId => PassDelegation
+        mapping(uint16 => mapping(uint256 => PassDelegation)) passDelegations;
+
+        // Escrow balances for lender earnings: user => amount
+        mapping(address => uint256) lendingEscrowBalance;
+
+        // Collateral balances held: user => amount
+        mapping(address => uint256) collateralHeldBalance;
+
+        // Lending system pause flag
+        bool lendingSystemPaused;
     }
 
     // ============================================================

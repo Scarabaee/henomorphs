@@ -7,9 +7,9 @@ import {LibResourceStorage} from "../libraries/LibResourceStorage.sol";
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
 import {LibColonyWarsStorage} from "../libraries/LibColonyWarsStorage.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {IStakingCoreFacet} from "../interfaces/IStakingInterfaces.sol";
-import {StakedSpecimen} from "../../libraries/StakingModel.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {IStakingCoreFacet} from "../../staking/interfaces/IStakingInterfaces.sol";
+import {StakedSpecimen} from "../../../libraries/StakingModel.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 

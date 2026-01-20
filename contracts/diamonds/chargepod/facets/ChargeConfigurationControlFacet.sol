@@ -6,13 +6,13 @@ import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibColonyWarsStorage} from "../libraries/LibColonyWarsStorage.sol";
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {ChargeSettings, ChargeFees, ControlFee, ChargeActionType} from "../../libraries/HenomorphsModel.sol";
-import {AccessHelper} from "../libraries/AccessHelper.sol";
+import {ChargeSettings, ChargeFees, ControlFee, ChargeActionType} from "../../../libraries/HenomorphsModel.sol";
+import {AccessHelper} from "../../staking/libraries/AccessHelper.sol";
 import {IDiamondLoupe} from "../../shared/interfaces/IDiamondLoupe.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {LibFeeCollection} from "../../staking/libraries/LibFeeCollection.sol";
 
 /**
  * @title ChargeConfigurationControlFacet

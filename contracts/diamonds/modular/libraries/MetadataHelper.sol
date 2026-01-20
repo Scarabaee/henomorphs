@@ -1264,4 +1264,467 @@ library MetadataHelper {
         if (value < 90) return 3;
         return 4;
     }
+
+    // ==================== MISSION PASS METADATA - NEW COLLECTION TYPE ====================
+
+    /**
+     * @notice Mission Pass information structure
+     * @dev Used for generating Mission Pass NFT metadata
+     */
+    struct MissionPassInfo {
+        string missionName;       // e.g., "Mission Mars"
+        uint8 missionVariant;     // 0-4
+        bool hasMission;          // Always true for valid tokens
+        string difficulty;        // Easy, Medium, Hard, Expert, Legendary
+    }
+
+    /**
+     * @notice Extended Realm token data for dynamic animation selection
+     * @dev Used when generating animation URLs based on equipped Henomorph + Augment
+     */
+    struct RealmTokenContext {
+        uint8 henoVariant;        // Henomorph Matrix variant (1-4), 0 = no specific heno
+        uint8 augmentVariant;     // Augment Vol.2 variant (0-4), 0 = no augment
+        bool hasHenoContext;      // Whether heno context is available
+    }
+
+    /**
+     * @notice Generate complete Mission Pass metadata (basic version)
+     * @dev Uses "R" prefix for Realm assets (R{tier}_s_{mission}.png)
+     * @param collectionId Collection ID (5 for Odd Places)
+     * @param tokenId Token ID
+     * @param tokenTier Token tier (1)
+     * @param tokenVariant Mission variant (0-4)
+     * @param collectionName Collection name
+     * @param baseURI Base IPFS URI
+     * @param animationUri Animation base URI (empty string if no animation)
+     */
+    function generateMissionPassMetadata(
+        uint256 collectionId,
+        uint256 tokenId,
+        uint8 tokenTier,
+        uint8 tokenVariant,
+        string memory collectionName,
+        string memory baseURI,
+        string memory animationUri
+    ) external pure returns (string memory) {
+        // Create default context (no specific heno/augment)
+        RealmTokenContext memory context = RealmTokenContext({
+            henoVariant: 0,
+            augmentVariant: 0,
+            hasHenoContext: false
+        });
+
+        return _generateMissionPassMetadataInternal(
+            collectionId,
+            tokenId,
+            tokenTier,
+            tokenVariant,
+            collectionName,
+            baseURI,
+            animationUri,
+            context
+        );
+    }
+
+    /**
+     * @notice Generate Mission Pass metadata with Henomorph + Augment context
+     * @dev For dynamic animation selection based on equipped Henomorph and its Augment
+     * @param collectionId Collection ID
+     * @param tokenId Token ID
+     * @param tokenTier Token tier (1)
+     * @param tokenVariant Mission variant (0-4)
+     * @param collectionName Collection name
+     * @param baseURI Base IPFS URI
+     * @param animationUri Animation base URI
+     * @param context Henomorph and Augment variant context for animation selection
+     */
+    function generateMissionPassMetadataWithContext(
+        uint256 collectionId,
+        uint256 tokenId,
+        uint8 tokenTier,
+        uint8 tokenVariant,
+        string memory collectionName,
+        string memory baseURI,
+        string memory animationUri,
+        RealmTokenContext memory context
+    ) external pure returns (string memory) {
+        return _generateMissionPassMetadataInternal(
+            collectionId,
+            tokenId,
+            tokenTier,
+            tokenVariant,
+            collectionName,
+            baseURI,
+            animationUri,
+            context
+        );
+    }
+
+    /**
+     * @notice Internal Mission Pass metadata generation
+     */
+    function _generateMissionPassMetadataInternal(
+        uint256 collectionId,
+        uint256 tokenId,
+        uint8 tokenTier,
+        uint8 tokenVariant,
+        string memory collectionName,
+        string memory baseURI,
+        string memory animationUri,
+        RealmTokenContext memory context
+    ) private pure returns (string memory) {
+
+        // Get mission information
+        MissionPassInfo memory missionInfo = _getMissionPassInfo(tokenVariant);
+
+        // Build metadata components
+        string memory name = _buildMissionPassName(collectionName, tokenId, missionInfo);
+        string memory description = _buildMissionPassDescription(missionInfo);
+
+        // Build image URL with context (heno + augment variants)
+        string memory imageUrl = _buildMissionPassImageUrlWithContext(baseURI, tokenTier, tokenVariant, context);
+
+        // Build animation URL with context (heno + augment variants)
+        string memory animUrl = _buildMissionPassAnimationUrlWithContext(
+            baseURI,
+            animationUri,
+            tokenTier,
+            tokenVariant,
+            context
+        );
+
+        string memory attributes = _buildMissionPassAttributesWithContext(
+            collectionId,
+            tokenVariant,
+            missionInfo,
+            context
+        );
+
+        // Assemble JSON
+        string memory json = string.concat(
+            '{',
+            '"name":"', name, '",',
+            '"description":"', description, '",',
+            '"image":"', imageUrl, '"'
+        );
+
+        if (bytes(animUrl).length > 0) {
+            json = string.concat(json, ',"animation_url":"', animUrl, '"');
+        }
+
+        json = string.concat(
+            json,
+            ',"external_url":"https://zico.network",',
+            '"attributes":[', attributes, ']',
+            '}'
+        );
+
+        return json;
+    }
+
+    // ==================== MISSION PASS BUILDERS ====================
+
+    /**
+     * @notice Get mission information based on variant
+     */
+    function _getMissionPassInfo(uint8 tokenVariant) private pure returns (MissionPassInfo memory info) {
+        string[5] memory missionNames = [
+            "Sentry Station",
+            "Mission Mars",
+            "Mission Krosno",
+            "Mission Tomb",
+            "Mission Australia"
+        ];
+
+        string[5] memory difficulties = [
+            "Easy",
+            "Medium",
+            "Hard",
+            "Expert",
+            "Legendary"
+        ];
+
+        uint8 safeVariant = tokenVariant <= 4 ? tokenVariant : 0;
+
+        return MissionPassInfo({
+            missionName: missionNames[safeVariant],
+            missionVariant: safeVariant,
+            hasMission: true,
+            difficulty: difficulties[safeVariant]
+        });
+    }
+
+    /**
+     * @notice Build Mission Pass token name
+     */
+    function _buildMissionPassName(
+        string memory collectionName,
+        uint256 tokenId,
+        MissionPassInfo memory info
+    ) private pure returns (string memory) {
+        if (info.hasMission && bytes(info.missionName).length > 0) {
+            return string.concat(info.missionName, " #", tokenId.toString());
+        }
+        return string.concat(collectionName, " #", tokenId.toString());
+    }
+
+    /**
+     * @notice Build Mission Pass description
+     */
+    function _buildMissionPassDescription(MissionPassInfo memory info) private pure returns (string memory) {
+        string memory baseDescription = "Mission Pass for Henomorphs Realms: The Odd Places. ";
+
+        string[5] memory missionDescriptions = [
+            "Sentry Station - A routine patrol mission around the abandoned outpost. Perfect for training new recruits.",
+            "Mission Mars - Explore the red dusty wastelands of the Martian colony. Beware of hidden dangers.",
+            "Mission Krosno - Navigate through the twisted industrial complex of the abandoned Krosno facility.",
+            "Mission Tomb - Descend into the ancient burial chambers. Only the bravest dare to enter.",
+            "Mission Australia - Venture into the most dangerous territory known. Everything here wants to kill you."
+        ];
+
+        uint8 safeVariant = info.missionVariant <= 4 ? info.missionVariant : 0;
+
+        return string.concat(baseDescription, missionDescriptions[safeVariant]);
+    }
+
+    /**
+     * @notice Build Realm image URL with "R" prefix (basic version)
+     * @dev Format: {baseURI}R{tier}_s_{mission}.png
+     */
+    function _buildMissionPassImageUrl(
+        string memory baseURI,
+        uint8 tokenTier,
+        uint8 tokenVariant
+    ) private pure returns (string memory) {
+        return string.concat(
+            baseURI,
+            "R",  // Realm prefix
+            tokenTier.toString(),
+            "_s_",
+            tokenVariant.toString(),
+            ".png"
+        );
+    }
+
+    /**
+     * @notice Build Realm image URL with Henomorph + Augment context
+     * @dev Format: {baseURI}R{tier}_s_{mission}_{heno}_{augment}.png
+     *
+     * Image file naming convention:
+     * - R{tier}_s_{mission}.png              - Main mission image (no specific heno)
+     * - R{tier}_s_{mission}_{heno}_{aug}.png - Heno variant with/without augment
+     *
+     * Examples for Mission Mars (mission=1), Tier 1:
+     * - R1_s_1.png         - Generic Mars image
+     * - R1_s_1_1_0.png     - Mars + Heno V1, no augment
+     * - R1_s_1_2_3.png     - Mars + Heno V2 + Augment V3
+     */
+    function _buildMissionPassImageUrlWithContext(
+        string memory baseURI,
+        uint8 tokenTier,
+        uint8 tokenVariant,
+        RealmTokenContext memory context
+    ) private pure returns (string memory) {
+        // If no heno context, return basic mission image
+        if (!context.hasHenoContext || context.henoVariant == 0) {
+            return string.concat(
+                baseURI,
+                "R",
+                tokenTier.toString(),
+                "_s_",
+                tokenVariant.toString(),
+                ".png"
+            );
+        }
+
+        // Build full image URL with heno and augment variants
+        // Format: R{tier}_s_{mission}_{heno}_{augment}.png
+        return string.concat(
+            baseURI,
+            "R",
+            tokenTier.toString(),
+            "_s_",
+            tokenVariant.toString(),
+            "_",
+            context.henoVariant.toString(),
+            "_",
+            context.augmentVariant.toString(),
+            ".png"
+        );
+    }
+
+    /**
+     * @notice Build Realm animation URL with "R" prefix (basic version)
+     * @dev Format: {baseURI}R{tier}_a_{mission}_0.mp4 (main mission animation)
+     */
+    function _buildMissionPassAnimationUrl(
+        string memory baseURI,
+        string memory animationUri,
+        uint8 tokenTier,
+        uint8 tokenVariant
+    ) private pure returns (string memory) {
+        // Variant 0 (Sentry Station) has no animation
+        if (tokenVariant == 0) {
+            return "";
+        }
+
+        if (bytes(animationUri).length == 0 && bytes(baseURI).length == 0) {
+            return "";
+        }
+
+        string memory uri = bytes(animationUri).length > 0 ? animationUri : baseURI;
+
+        // Default: main mission animation (no specific heno context)
+        // Format: R{tier}_a_{mission}_0.mp4
+        return string.concat(
+            uri,
+            "R",  // Realm prefix
+            tokenTier.toString(),
+            "_a_",
+            tokenVariant.toString(),
+            "_0.mp4"  // Main animation (heno 0 = generic)
+        );
+    }
+
+    /**
+     * @notice Build Realm animation URL with Henomorph + Augment context
+     * @dev Format: {baseURI}R{tier}_a_{mission}_{heno}_{augment}.mp4
+     *
+     * Animation file naming convention:
+     * - R{tier}_a_{mission}_0.mp4           - Main mission animation (no specific heno)
+     * - R{tier}_a_{mission}_{heno}_0.mp4    - Heno variant without augment
+     * - R{tier}_a_{mission}_{heno}_{aug}.mp4 - Heno variant with augment
+     *
+     * Examples for Mission Mars (mission=1), Tier 1:
+     * - R1_a_1_0.mp4       - Generic Mars animation
+     * - R1_a_1_1_0.mp4     - Mars + Heno V1, no augment
+     * - R1_a_1_1_2.mp4     - Mars + Heno V1 + Augment V2
+     * - R1_a_1_3_4.mp4     - Mars + Heno V3 + Augment V4
+     */
+    function _buildMissionPassAnimationUrlWithContext(
+        string memory baseURI,
+        string memory animationUri,
+        uint8 tokenTier,
+        uint8 tokenVariant,
+        RealmTokenContext memory context
+    ) private pure returns (string memory) {
+        // Variant 0 (Sentry Station) has no animation
+        if (tokenVariant == 0) {
+            return "";
+        }
+
+        if (bytes(animationUri).length == 0 && bytes(baseURI).length == 0) {
+            return "";
+        }
+
+        string memory uri = bytes(animationUri).length > 0 ? animationUri : baseURI;
+
+        // If no heno context, return main mission animation
+        if (!context.hasHenoContext || context.henoVariant == 0) {
+            return string.concat(
+                uri,
+                "R",
+                tokenTier.toString(),
+                "_a_",
+                tokenVariant.toString(),
+                "_0.mp4"
+            );
+        }
+
+        // Build full animation URL with heno and augment variants
+        // Format: R{tier}_a_{mission}_{heno}_{augment}.mp4
+        return string.concat(
+            uri,
+            "R",
+            tokenTier.toString(),
+            "_a_",
+            tokenVariant.toString(),
+            "_",
+            context.henoVariant.toString(),
+            "_",
+            context.augmentVariant.toString(),
+            ".mp4"
+        );
+    }
+
+    /**
+     * @notice Build Realm attributes JSON (basic version)
+     */
+    function _buildMissionPassAttributes(
+        uint256 collectionId,
+        uint8 tokenVariant,
+        MissionPassInfo memory info
+    ) private pure returns (string memory) {
+        RealmTokenContext memory emptyContext = RealmTokenContext({
+            henoVariant: 0,
+            augmentVariant: 0,
+            hasHenoContext: false
+        });
+
+        return _buildMissionPassAttributesWithContext(collectionId, tokenVariant, info, emptyContext);
+    }
+
+    /**
+     * @notice Build Realm attributes JSON with Henomorph + Augment context
+     */
+    function _buildMissionPassAttributesWithContext(
+        uint256 collectionId,
+        uint8 tokenVariant,
+        MissionPassInfo memory info,
+        RealmTokenContext memory context
+    ) private pure returns (string memory) {
+        string memory attributes = string.concat(
+            '{"trait_type":"Collection Type","value":"Realm"}',
+            ',{"trait_type":"Collection ID","value":"', collectionId.toString(), '"}',
+            ',{"trait_type":"Mission Variant","value":"', tokenVariant.toString(), '"}',
+            ',{"trait_type":"Mission Name","value":"', info.missionName, '"}',
+            ',{"trait_type":"Difficulty","value":"', info.difficulty, '"}'
+        );
+
+        // Add YLW reward tier indicator (only for variants 1-4)
+        if (tokenVariant > 0) {
+            string[4] memory rewardTiers = ["500 YLW", "1000 YLW", "2000 YLW", "4000 YLW"];
+            uint8 rewardIndex = tokenVariant <= 4 ? tokenVariant - 1 : 0;
+
+            attributes = string.concat(
+                attributes,
+                ',{"trait_type":"Base Reward","value":"', rewardTiers[rewardIndex], '"}'
+            );
+        }
+
+        // Add rolling price indicator
+        string[5] memory rollingPrices = ["50 ZICO", "100 ZICO", "200 ZICO", "400 ZICO", "800 ZICO"];
+        uint8 priceIndex = tokenVariant <= 4 ? tokenVariant : 0;
+
+        attributes = string.concat(
+            attributes,
+            ',{"trait_type":"Rolling Price","value":"', rollingPrices[priceIndex], '"}'
+        );
+
+        // Add Henomorph + Augment context attributes if present
+        if (context.hasHenoContext && context.henoVariant > 0) {
+            attributes = string.concat(
+                attributes,
+                ',{"trait_type":"Equipped Henomorph Variant","value":"V', context.henoVariant.toString(), '"}'
+            );
+
+            if (context.augmentVariant > 0) {
+                attributes = string.concat(
+                    attributes,
+                    ',{"trait_type":"Equipped Augment Variant","value":"V', context.augmentVariant.toString(), '"}',
+                    ',{"trait_type":"Configuration","value":"Heno V', context.henoVariant.toString(),
+                    ' + Aug V', context.augmentVariant.toString(), '"}'
+                );
+            } else {
+                attributes = string.concat(
+                    attributes,
+                    ',{"trait_type":"Equipped Augment Variant","value":"None"}',
+                    ',{"trait_type":"Configuration","value":"Heno V', context.henoVariant.toString(), ' (Base)"}'
+                );
+            }
+        }
+
+        return attributes;
+    }
 }

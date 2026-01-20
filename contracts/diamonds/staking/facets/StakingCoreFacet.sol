@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
 import {LibStakingStorage} from "../libraries/LibStakingStorage.sol";
 import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
 import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {StakedSpecimen, RewardCalcData, InfusionCalcData, StakeBalanceParams} from "../../libraries/StakingModel.sol";
-import {SpecimenCollection, ControlFee} from "../../libraries/HenomorphsModel.sol";
+import {StakedSpecimen, RewardCalcData, InfusionCalcData, StakeBalanceParams} from "../../../libraries/StakingModel.sol";
+import {SpecimenCollection, ControlFee} from "../../../libraries/HenomorphsModel.sol";
 import {IStakingBiopodFacet, IStakingIntegrationFacet, IStakingWearFacet, IExternalCollection, IColonyFacet} from "../interfaces/IStakingInterfaces.sol";
 import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 import {LibStakingAchievementTrigger} from "../libraries/LibStakingAchievementTrigger.sol";
 
 interface IStakingTraitFacet {

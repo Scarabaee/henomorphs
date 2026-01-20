@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import {IInfrastructureDescriptor} from "../interfaces/IInfrastructureDescriptor.sol";
-import {InfrastructureSVGLib} from "../../libraries/InfrastructureSVGLib.sol";
+import {InfrastructureSVGLib} from "../../../diamonds/modular/libraries/InfrastructureSVGLib.sol";
 
 /**
  * @title InfrastructureDescriptor

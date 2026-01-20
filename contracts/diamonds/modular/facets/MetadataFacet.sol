@@ -311,8 +311,19 @@ contract MetadataFacet is AccessControlBase {
         uint8 tier
     ) internal view returns (string memory) {
         LibCollectionStorage.CollectionStorage storage cs = LibCollectionStorage.collectionStorage();
-        
-        string memory prefix = collection.collectionType == CollectionType.Main ? "H" : "A";
+
+        // Determine prefix based on collection type
+        string memory prefix;
+        if (collection.collectionType == CollectionType.Main) {
+            prefix = "H";
+        } else if (collection.collectionType == CollectionType.Augment) {
+            prefix = "A";
+        } else if (collection.collectionType == CollectionType.Realm) {
+            prefix = "R";
+        } else {
+            prefix = "A"; // Default fallback
+        }
+
         string memory _tokenUri = string.concat(
             collection.baseURI,
             prefix,
@@ -344,15 +355,19 @@ contract MetadataFacet is AccessControlBase {
         uint8 tier,
         uint256 tokenId
     ) internal view returns (string memory) {
-        
+
         if (collection.collectionType == CollectionType.Main) {
             return _buildMainTokenMetadata(collectionId, tier, tokenId);
         }
-        
+
         if (collection.collectionType == CollectionType.Augment) {
             return _buildAugmentTokenMetadata(collectionId, tier, tokenId);
         }
-        
+
+        if (collection.collectionType == CollectionType.Realm) {
+            return _buildMissionPassTokenMetadata(collectionId, tier, tokenId);
+        }
+
         revert UnsupportedCollectionType(collectionId, "");
     }
     
@@ -520,10 +535,41 @@ contract MetadataFacet is AccessControlBase {
             collection.baseURI,
             animationUri
         );
-        
+
         return MetadataHelper.encodeTokenURI(json);
     }
-    
+
+    /**
+     * @notice Build Mission Pass token metadata using MetadataHelper library
+     * @dev Uses "M" prefix for Mission Pass assets
+     */
+    function _buildMissionPassTokenMetadata(uint256 collectionId, uint8 tier, uint256 tokenId) internal view returns (string memory) {
+        LibCollectionStorage.CollectionStorage storage cs = LibCollectionStorage.collectionStorage();
+        LibCollectionStorage.CollectionData storage collection = cs.collections[collectionId];
+
+        uint8 tokenVariant = _getTokenVariant(collectionId, tier, tokenId);
+
+        // Determine animation URI for Mission Pass
+        string memory animationUri = "";
+        if (bytes(collection.animationBaseURI).length > 0) {
+            animationUri = collection.animationBaseURI;
+        } else if (bytes(collection.baseURI).length > 0) {
+            animationUri = collection.baseURI;
+        }
+
+        string memory json = MetadataHelper.generateMissionPassMetadata(
+            collectionId,
+            tokenId,
+            tier,
+            tokenVariant,
+            collection.name,
+            collection.baseURI,
+            animationUri
+        );
+
+        return MetadataHelper.encodeTokenURI(json);
+    }
+
     // ==================== SIMPLE METADATA WITH THEME ====================
     
     /**
@@ -619,7 +665,7 @@ contract MetadataFacet is AccessControlBase {
         } else if (collection.collectionType == CollectionType.Augment) {
             // Use existing library function for augment metadata
             string memory animationUri = _getAugmentAnimationUri(collection, collectionId, tier, tokenId);
-            
+
             return MetadataHelper.generateAugmentMetadata(
                 collectionId,
                 tokenId,
@@ -628,10 +674,30 @@ contract MetadataFacet is AccessControlBase {
                 collection.contractAddress,
                 collection.name,
                 collection.baseURI,
-                animationUri 
+                animationUri
             );
+        } else if (collection.collectionType == CollectionType.Realm) {
+            // Use Mission Pass metadata generator with M prefix
+            string memory animationUri = "";
+            if (bytes(collection.animationBaseURI).length > 0) {
+                animationUri = collection.animationBaseURI;
+            } else if (bytes(collection.baseURI).length > 0) {
+                animationUri = collection.baseURI;
+            }
+
+            string memory json = MetadataHelper.generateMissionPassMetadata(
+                collectionId,
+                tokenId,
+                tier,
+                tokenVariant,
+                collection.name,
+                collection.baseURI,
+                animationUri
+            );
+
+            return MetadataHelper.encodeTokenURI(json);
         }
-        
+
         revert UnsupportedCollectionType(collectionId, "");
     }
     

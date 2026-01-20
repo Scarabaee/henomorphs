@@ -4,12 +4,12 @@ pragma solidity ^0.8.27;
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {LibResourceStorage} from "../libraries/LibResourceStorage.sol";
 import {LibColonyWarsStorage} from "../libraries/LibColonyWarsStorage.sol";
-import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
+import {LibFeeCollection} from "../../staking/libraries/LibFeeCollection.sol";
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
-import {ColonyHelper} from "../libraries/ColonyHelper.sol";
+import {ColonyHelper} from "../../staking/libraries/ColonyHelper.sol";
 import {LibAchievementTrigger} from "../libraries/LibAchievementTrigger.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 

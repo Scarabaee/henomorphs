@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27; 
 
-import {UserEngagement, DailyChallengeSet, GlobalGameState, FlashEvent, FlashParticipation, Achievement, AchievementProgress, ScheduledEvent, RankingConfig, RankingEntry, TopPlayersRanking} from "../../libraries/GamingModel.sol";
+import {UserEngagement, DailyChallengeSet, GlobalGameState, FlashEvent, FlashParticipation, Achievement, AchievementProgress, ScheduledEvent, RankingConfig, RankingEntry, TopPlayersRanking} from "../../../libraries/GamingModel.sol";
 
 /**
  * @title LibGamingStorage - Optimized Gaming Storage System

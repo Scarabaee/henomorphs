@@ -2,13 +2,13 @@
 pragma solidity ^0.8.27;
 
 import {LibStakingStorage} from "../libraries/LibStakingStorage.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {Calibration, ColonyCriteria} from "../../libraries/HenomorphsModel.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {Calibration, ColonyCriteria} from "../../../libraries/HenomorphsModel.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 import {AccessHelper} from "../libraries/AccessHelper.sol";
 import {IColonyFacet, IStakingBiopodFacet} from "../interfaces/IStakingInterfaces.sol";
-import {StakedSpecimen} from "../../libraries/StakingModel.sol";
+import {StakedSpecimen} from "../../../libraries/StakingModel.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 /**

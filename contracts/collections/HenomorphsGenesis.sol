@@ -13,15 +13,15 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "../common/CollectionModel.sol";
+import "../libraries/CollectionModel.sol";
 import "../interfaces/ICollectionRepository.sol";
 import "../interfaces/IAirdropSupplier.sol";
 import "../interfaces/IMintableCollection.sol";
-import "./interfaces/ISpecimenCollection.sol";
+import "../interfaces/ISpecimenCollection.sol";
 import "../utils/IssueHelper.sol";
-import "./libraries/HenomorphsModel.sol";
-import "./libraries/HenomorphsMetadata.sol";  
-import {ICollectionDiamond} from "./modular/interfaces/ICollectionDiamond.sol";
+import "../libraries/HenomorphsModel.sol";
+import "../libraries/HenomorphsMetadata.sol";
+import {ICollectionDiamond} from "../diamonds/modular/interfaces/ICollectionDiamond.sol";
 
 
 /**

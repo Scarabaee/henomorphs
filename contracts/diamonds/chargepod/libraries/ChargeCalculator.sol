@@ -4,7 +4,7 @@ pragma solidity ^0.8.27;
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {PowerMatrix, ChargeActionType, SpecimenCollection, ChargeAccessory, ChargeSeason} from "../../libraries/HenomorphsModel.sol"; 
+import {PowerMatrix, ChargeActionType, SpecimenCollection, ChargeAccessory, ChargeSeason} from "../../../libraries/HenomorphsModel.sol"; 
 
 /**
  * @title ChargeCalculator

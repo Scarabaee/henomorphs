@@ -3,11 +3,11 @@ pragma solidity ^0.8.27;
 
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
-import {RankingConfig, RankingEntry, TopPlayersRanking, UserEngagement, DailyChallengeSet, AchievementProgress} from "../../libraries/GamingModel.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {RankingConfig, RankingEntry, TopPlayersRanking, UserEngagement, DailyChallengeSet, AchievementProgress} from "../../../libraries/GamingModel.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {LibAchievementStorage} from "../libraries/LibAchievementStorage.sol";
-import {AccessHelper} from "../libraries/AccessHelper.sol";
+import {AccessHelper} from "../../staking/libraries/AccessHelper.sol";
 
 /**
  * @title ActionRankingFacet - Complete Fixed & Optimized Production Version

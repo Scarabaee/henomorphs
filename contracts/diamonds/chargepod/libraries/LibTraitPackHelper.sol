@@ -2,11 +2,11 @@
 pragma solidity ^0.8.27;
 
 import {LibHenomorphsStorage} from "./LibHenomorphsStorage.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
-import {ChargeAccessory, SpecimenCollection, TraitPackEquipment} from "../../libraries/HenomorphsModel.sol";
-import {ISpecimenCollection} from "../../interfaces/ISpecimenCollection.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
+import {ChargeAccessory, SpecimenCollection, TraitPackEquipment} from "../../../libraries/HenomorphsModel.sol";
+import {ISpecimenCollection} from "../../../interfaces/ISpecimenCollection.sol";
 import {ICollectionDiamond} from "../../modular/interfaces/ICollectionDiamond.sol";
-import {IExternalCollection, IRankingFacet} from "../interfaces/IStakingInterfaces.sol";
+import {IExternalCollection, IRankingFacet} from "../../staking/interfaces/IStakingInterfaces.sol";
 
 /**
  * @title LibTraitPackHelper

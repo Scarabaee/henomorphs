@@ -4,6 +4,47 @@ pragma solidity ^0.8.27;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
+/**
+ * @notice Structs and enums module which provides a model of the PCS collections. 
+ *
+ * @custom:website https://nft.poczta-polska.pl
+ * @author rutilicus.eth (ArchXS)
+ * @custom:security-contact contact@archxs.com
+ */
+
+/**
+ * https://github.com/maticnetwork/pos-portal/blob/master/contracts/common/ContextMixin.sol
+ */
+abstract contract ContextMixin is Initializable {
+
+    function __ContextMixin_init() internal onlyInitializing {
+    }
+
+    function __ContextMixin_init_unchained() internal onlyInitializing {
+    }
+
+    function msgSender()
+        internal
+        view
+        returns (address payable sender)
+    {
+        if (msg.sender == address(this)) {
+            bytes memory array = msg.data;
+            uint256 index = msg.data.length;
+            assembly {
+                // Load the 32 bytes word from memory with the address on the lower 20 bytes, and mask those.
+                sender := and(
+                    mload(add(array, index)),
+                    0xffffffffffffffffffffffffffffffffffffffff
+                )
+            }
+        } else {
+            sender = payable(msg.sender);
+        }
+        return sender;
+    }
+}
+
 bytes1 constant SLASH = 0x2f;
 
 /**
@@ -120,3 +161,29 @@ struct TierVariant {
     // Max varoant supply
     uint256 maxSupply;
 }
+
+/**
+ * @dev Struct that keeps issue phase specific properties.
+ */
+struct PhaseInfo {
+    // The current general issue phase of the series
+    IssuePhase phase;
+    // Block timestamp or number at which phase starts
+    uint256 phaseStart;
+    // Block timestamp or number at which phase ends
+    uint256 phaseEnd;
+    // Merkle root if access is limited
+    bytes32 merkleRoot;
+    // The number of stamps/tokens available in the given phase
+    uint256 maxSupply;
+    // Max available mint per wallet
+    uint256 maxMints;
+    // The token price discount for onchain sale
+    uint256 discount;
+    // Whether the phase settings are applicable
+    bool isActive;
+    // The specific features bitmap
+    uint256 features;
+}
+
+

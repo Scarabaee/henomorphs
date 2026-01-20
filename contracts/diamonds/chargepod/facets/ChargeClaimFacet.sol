@@ -4,14 +4,14 @@ pragma solidity ^0.8.27;
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
 import {LibAchievementStorage} from "../libraries/LibAchievementStorage.sol";
-import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
+import {LibFeeCollection} from "../../staking/libraries/LibFeeCollection.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {DailyChallengeSet, DailyChallenge, AchievementProgress, FlashEvent, FlashParticipation, RankingConfig, RankingEntry} from "../../libraries/GamingModel.sol";
-import {ChargeSeason} from "../../libraries/HenomorphsModel.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {IExternalCollection, IRankingFacet} from "../interfaces/IStakingInterfaces.sol";
+import {DailyChallengeSet, DailyChallenge, AchievementProgress, FlashEvent, FlashParticipation, RankingConfig, RankingEntry} from "../../../libraries/GamingModel.sol";
+import {ChargeSeason} from "../../../libraries/HenomorphsModel.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {IExternalCollection, IRankingFacet} from "../../staking/interfaces/IStakingInterfaces.sol";
 
 /**
  * @title ChargeClaimFacet - FIXED VERSION

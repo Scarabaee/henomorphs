@@ -464,7 +464,7 @@ contract ConduitTokenDescriptor is IConduitTokenDescriptor {
             '<rect x="0" y="0" width="10" height="2" rx="1" fill="#FFFFFF" opacity="0.9"/>',
             '</g>',
             // Balance count text
-            '<text x="252" y="40" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF" text-anchor="start">×', balance.toString(), '</text>'
+            unicode'<text x="252" y="40" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF" text-anchor="start">×', balance.toString(), '</text>'
         );
     }
 

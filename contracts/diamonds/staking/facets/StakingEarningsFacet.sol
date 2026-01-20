@@ -5,13 +5,13 @@ import {LibStakingStorage} from "../libraries/LibStakingStorage.sol";
 import {LibBiopodIntegration} from "../libraries/LibBiopodIntegration.sol";
 import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
 import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {StakedSpecimen, RewardCalcData, StakeBalanceParams} from "../../libraries/StakingModel.sol";
-import {SpecimenCollection, ChargeAccessory} from "../../libraries/HenomorphsModel.sol";
+import {StakedSpecimen, RewardCalcData, StakeBalanceParams} from "../../../libraries/StakingModel.sol";
+import {SpecimenCollection, ChargeAccessory} from "../../../libraries/HenomorphsModel.sol";
 import {RewardCalculator} from "../libraries/RewardCalculator.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {LibStakingAchievementTrigger} from "../libraries/LibStakingAchievementTrigger.sol";
 

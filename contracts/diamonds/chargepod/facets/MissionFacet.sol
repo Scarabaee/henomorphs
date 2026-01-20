@@ -4,12 +4,12 @@ pragma solidity ^0.8.27;
 import {LibMissionStorage} from "../libraries/LibMissionStorage.sol";
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
-import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {ColonyHelper} from "../libraries/ColonyHelper.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
-import {ControlFee, SpecimenCollection, PowerMatrix} from "../../libraries/HenomorphsModel.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
+import {AccessHelper} from "../../staking/libraries/AccessHelper.sol";
+import {ColonyHelper} from "../../staking/libraries/ColonyHelper.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {LibFeeCollection} from "../../staking/libraries/LibFeeCollection.sol";
+import {ControlFee, SpecimenCollection, PowerMatrix} from "../../../libraries/HenomorphsModel.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -56,6 +56,24 @@ contract MissionFacet is AccessControlBase {
     event MissionFailed(bytes32 indexed sessionId, address indexed initiator, string reason);
     event MissionAbandoned(bytes32 indexed sessionId, address indexed initiator);
 
+    // Recharge events
+    event MissionPassRecharged(
+        uint16 indexed collectionId,
+        uint256 indexed tokenId,
+        address indexed user,
+        uint16 usesAdded,
+        uint256 totalCost
+    );
+
+    // Lending revenue share events
+    event LenderRewardShareDeposited(
+        uint16 indexed collectionId,
+        uint256 indexed tokenId,
+        address indexed lender,
+        address borrower,
+        uint256 amount
+    );
+
     // ============================================================
     // ERRORS
     // ============================================================
@@ -86,6 +104,19 @@ contract MissionFacet is AccessControlBase {
     error InvalidActionTarget(uint8 nodeId);
     error ObjectivesNotComplete(bytes32 sessionId);
     error InsufficientRewardBalance(uint256 required, uint256 available);
+
+    // Recharge errors
+    error RechargeSystemPaused();
+    error RechargeNotEnabled(uint16 collectionId);
+    error RechargeOnCooldown(uint16 collectionId, uint256 tokenId, uint256 remainingTime);
+    error PassNotInitialized(uint16 collectionId, uint256 tokenId);
+    error TooManyUsesToRecharge(uint16 requested, uint16 max);
+    error InsufficientPayment(uint256 required, uint256 available);
+
+    // Delegation errors
+    error PassCurrentlyDelegated(uint16 collectionId, uint256 tokenId);
+    error NotPassOwnerOrDelegatee(uint16 collectionId, uint256 tokenId, address caller);
+    error DelegationUsesExhausted(uint16 collectionId, uint256 tokenId);
 
     // ============================================================
     // MODIFIERS
@@ -145,8 +176,8 @@ contract MissionFacet is AccessControlBase {
         // Check user cooldown
         _checkUserCooldown(ms, passCollectionId, initiator);
 
-        // Validate Mission Pass
-        _validateMissionPass(passCollectionId, passTokenId, initiator);
+        // Validate Mission Pass (returns isOwner for delegation tracking)
+        bool isOwner = _validateMissionPass(passCollectionId, passTokenId, initiator);
 
         // Validate variant
         if (!ms.variantConfigs[passCollectionId][missionVariant].enabled) {
@@ -158,7 +189,7 @@ contract MissionFacet is AccessControlBase {
 
         // Consume entry fee and Mission Pass use
         _consumeEntryFee(passCollectionId, initiator);
-        _consumeMissionPassUse(passCollectionId, passTokenId);
+        _consumeMissionPassUse(passCollectionId, passTokenId, isOwner);
 
         // Generate session ID and initialize session
         sessionId = _generateSessionId(ms, initiator);
@@ -431,9 +462,15 @@ contract MissionFacet is AccessControlBase {
         // Calculate final rewards with all bonuses
         result = _calculateFinalRewards(sessionId);
 
-        // Distribute rewards
+        // Distribute rewards with revenue share support
         if (result.totalReward > 0) {
-            _distributeRewards(initiator, result.totalReward);
+            LibMissionStorage.PackedMissionState storage state = ms.packedStates[sessionId];
+            _distributeRewardsWithRevenueShare(
+                initiator,
+                result.totalReward,
+                state.passCollectionId,
+                state.passTokenId
+            );
         }
 
         // Update user profile and state
@@ -716,10 +753,188 @@ contract MissionFacet is AccessControlBase {
     }
 
     // ============================================================
+    // RECHARGE FUNCTIONS
+    // ============================================================
+
+    /**
+     * @notice Recharge a Mission Pass with additional uses
+     * @dev Only pass owner can recharge. Pass must be Active or Exhausted (not Uninitialized).
+     * @param collectionId Mission Pass collection ID
+     * @param tokenId Token ID to recharge
+     * @param usesToAdd Number of uses to add
+     */
+    function rechargeMissionPass(
+        uint16 collectionId,
+        uint256 tokenId,
+        uint16 usesToAdd
+    ) external whenNotPaused nonReentrant {
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+
+        // Check recharge system not paused
+        if (ms.rechargeSystemPaused) {
+            revert RechargeSystemPaused();
+        }
+
+        // Validate collection exists
+        if (collectionId == 0 || collectionId > ms.passCollectionCounter) {
+            revert MissionPassCollectionDisabled(collectionId);
+        }
+
+        LibMissionStorage.RechargeConfig storage config = ms.passRechargeConfigs[collectionId];
+
+        // Check recharge enabled for this collection
+        if (!config.enabled) {
+            revert RechargeNotEnabled(collectionId);
+        }
+
+        // Verify caller is NFT owner (only owner can recharge, not delegatee)
+        LibMissionStorage.MissionPassCollection storage passCollection = ms.passCollections[collectionId];
+        address caller = LibMeta.msgSender();
+        if (IERC721(passCollection.collectionAddress).ownerOf(tokenId) != caller) {
+            revert MissionPassNotOwned(collectionId, tokenId);
+        }
+
+        // Check pass status - must be Active or Exhausted (not Uninitialized)
+        LibMissionStorage.PassStatus status = ms.passStatus[collectionId][tokenId];
+        if (status == LibMissionStorage.PassStatus.Uninitialized) {
+            revert PassNotInitialized(collectionId, tokenId);
+        }
+
+        // Check max recharge per tx
+        if (config.maxRechargePerTx > 0 && usesToAdd > config.maxRechargePerTx) {
+            revert TooManyUsesToRecharge(usesToAdd, config.maxRechargePerTx);
+        }
+
+        // Check cooldown
+        LibMissionStorage.PassRechargeRecord storage record = ms.passRechargeRecords[collectionId][tokenId];
+        if (config.cooldownSeconds > 0 && record.lastRechargeTime > 0) {
+            uint256 nextRechargeTime = record.lastRechargeTime + config.cooldownSeconds;
+            if (block.timestamp < nextRechargeTime) {
+                revert RechargeOnCooldown(collectionId, tokenId, nextRechargeTime - block.timestamp);
+            }
+        }
+
+        // Calculate cost with discount
+        // finalPrice = (pricePerUse * usesToAdd) * (10000 - discountBps) / 10000
+        uint256 totalCost = uint256(config.pricePerUse) * usesToAdd;
+        if (config.discountBps > 0) {
+            totalCost = (totalCost * (10000 - config.discountBps)) / 10000;
+        }
+
+        // Collect payment
+        if (totalCost > 0) {
+            if (config.burnOnCollect) {
+                // Burn tokens via treasury
+                LibFeeCollection.collectAndBurnFee(
+                    IERC20(config.paymentToken),
+                    caller,
+                    config.paymentBeneficiary,
+                    totalCost,
+                    "mission_pass_recharge"
+                );
+            } else {
+                // Transfer to beneficiary using LibFeeCollection
+                LibFeeCollection.collectFee(
+                    IERC20(config.paymentToken),
+                    caller,
+                    config.paymentBeneficiary,
+                    totalCost,
+                    "mission_pass_recharge"
+                );
+            }
+        }
+
+        // Update uses remaining
+        ms.passUsesRemaining[collectionId][tokenId] += usesToAdd;
+
+        // Update status to Active
+        ms.passStatus[collectionId][tokenId] = LibMissionStorage.PassStatus.Active;
+
+        // Update recharge record
+        record.lastRechargeTime = uint32(block.timestamp);
+        record.totalRecharges++;
+        record.totalUsesRecharged += usesToAdd;
+
+        emit MissionPassRecharged(collectionId, tokenId, caller, usesToAdd, totalCost);
+    }
+
+    /**
+     * @notice Get recharge info for a specific Mission Pass
+     * @param collectionId Mission Pass collection ID
+     * @param tokenId Token ID
+     * @return status Current pass status
+     * @return usesRemaining Remaining uses
+     * @return canRecharge Whether pass can be recharged
+     * @return cooldownRemaining Seconds until recharge available (0 if no cooldown)
+     * @return pricePerUse Base price per use
+     * @return discountBps Discount in basis points
+     */
+    function getPassRechargeInfo(uint16 collectionId, uint256 tokenId)
+        external
+        view
+        returns (
+            LibMissionStorage.PassStatus status,
+            uint16 usesRemaining,
+            bool canRecharge,
+            uint256 cooldownRemaining,
+            uint96 pricePerUse,
+            uint16 discountBps
+        )
+    {
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+
+        status = ms.passStatus[collectionId][tokenId];
+        usesRemaining = ms.passUsesRemaining[collectionId][tokenId];
+
+        LibMissionStorage.RechargeConfig storage config = ms.passRechargeConfigs[collectionId];
+        pricePerUse = config.pricePerUse;
+        discountBps = config.discountBps;
+
+        // Can recharge if: recharge enabled, pass initialized (Active or Exhausted), not on cooldown
+        canRecharge = config.enabled &&
+            !ms.rechargeSystemPaused &&
+            status != LibMissionStorage.PassStatus.Uninitialized;
+
+        // Calculate cooldown remaining
+        if (config.cooldownSeconds > 0) {
+            LibMissionStorage.PassRechargeRecord storage record = ms.passRechargeRecords[collectionId][tokenId];
+            if (record.lastRechargeTime > 0) {
+                uint256 nextRechargeTime = record.lastRechargeTime + config.cooldownSeconds;
+                if (block.timestamp < nextRechargeTime) {
+                    cooldownRemaining = nextRechargeTime - block.timestamp;
+                    canRecharge = false;
+                }
+            }
+        }
+    }
+
+    /**
+     * @notice Get recharge history for a specific Mission Pass
+     * @param collectionId Mission Pass collection ID
+     * @param tokenId Token ID
+     * @return record Recharge record
+     */
+    function getPassRechargeRecord(uint16 collectionId, uint256 tokenId)
+        external
+        view
+        returns (LibMissionStorage.PassRechargeRecord memory record)
+    {
+        return LibMissionStorage.missionStorage().passRechargeRecords[collectionId][tokenId];
+    }
+
+    // ============================================================
     // INTERNAL FUNCTIONS - VALIDATION
     // ============================================================
 
-    function _validateMissionPass(uint16 collectionId, uint256 tokenId, address owner) internal view {
+    /**
+     * @notice Validate Mission Pass ownership or delegation (ERC-4907 pattern)
+     * @dev Supports both direct ownership and time-limited delegation with auto-expiry
+     * @param collectionId Mission Pass collection ID
+     * @param tokenId Token ID
+     * @param user Address attempting to use the pass
+     * @return isOwner True if user is the NFT owner, false if delegatee
+     */
+    function _validateMissionPass(uint16 collectionId, uint256 tokenId, address user) internal view returns (bool isOwner) {
         LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
         LibMissionStorage.MissionPassCollection storage passCollection = ms.passCollections[collectionId];
 
@@ -727,47 +942,93 @@ contract MissionFacet is AccessControlBase {
             revert MissionPassCollectionDisabled(collectionId);
         }
 
-        // Check ownership
-        if (IERC721(passCollection.collectionAddress).ownerOf(tokenId) != owner) {
-            revert MissionPassNotOwned(collectionId, tokenId);
+        // Check if user is NFT owner
+        address nftOwner = IERC721(passCollection.collectionAddress).ownerOf(tokenId);
+        isOwner = (nftOwner == user);
+
+        if (!isOwner) {
+            // Check if user is valid delegatee (ERC-4907 auto-expiry pattern)
+            LibMissionStorage.PassDelegation storage delegation = ms.passDelegations[collectionId][tokenId];
+
+            // Auto-expiry: delegation is invalid if expired (like ERC-4907 userOf())
+            if (delegation.delegatee != user || block.timestamp >= delegation.expires) {
+                revert NotPassOwnerOrDelegatee(collectionId, tokenId, user);
+            }
+
+            // Check delegation use limit if set
+            if (delegation.usesAllowed > 0 && delegation.usesConsumed >= delegation.usesAllowed) {
+                revert DelegationUsesExhausted(collectionId, tokenId);
+            }
+        } else {
+            // Owner cannot use pass if it's currently delegated to someone else
+            LibMissionStorage.PassDelegation storage delegation = ms.passDelegations[collectionId][tokenId];
+            if (delegation.delegatee != address(0) && block.timestamp < delegation.expires) {
+                revert PassCurrentlyDelegated(collectionId, tokenId);
+            }
         }
 
-        // Check uses remaining (view only - initialization happens in _consumeMissionPassUse)
+        // Check uses remaining using PassStatus
         if (passCollection.maxUsesPerToken > 0) {
-            uint16 remaining = ms.passUsesRemaining[collectionId][tokenId];
-            // If remaining is 0 and maxUsesPerToken > 0, it means either:
-            // 1. First use (will be initialized in _consumeMissionPassUse)
-            // 2. Exhausted (all uses consumed)
-            // We check if it was ever initialized by checking if it equals maxUsesPerToken after potential init
-            if (remaining == 0) {
-                // Check if this is truly exhausted (not first use)
-                // First use scenario: passUsesRemaining was never set, so it's 0
-                // Exhausted scenario: passUsesRemaining was decremented to 0
-                // We can't distinguish here, so we allow it and let _consumeMissionPassUse handle it
+            LibMissionStorage.PassStatus status = ms.passStatus[collectionId][tokenId];
+
+            // If Exhausted, cannot use (must recharge first)
+            if (status == LibMissionStorage.PassStatus.Exhausted) {
+                revert MissionPassExhausted(collectionId, tokenId);
             }
+
+            // If Active, check remaining uses
+            if (status == LibMissionStorage.PassStatus.Active) {
+                uint16 remaining = ms.passUsesRemaining[collectionId][tokenId];
+                if (remaining == 0) {
+                    revert MissionPassExhausted(collectionId, tokenId);
+                }
+            }
+            // If Uninitialized, it will be initialized in _consumeMissionPassUse
         }
     }
 
-    function _consumeMissionPassUse(uint16 collectionId, uint256 tokenId) internal {
+    /**
+     * @notice Consume one use of a Mission Pass
+     * @dev Tracks uses for both owner and delegatee, updates PassStatus
+     * @param collectionId Mission Pass collection ID
+     * @param tokenId Token ID
+     * @param isOwner True if caller is owner, false if delegatee
+     */
+    function _consumeMissionPassUse(uint16 collectionId, uint256 tokenId, bool isOwner) internal {
         LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
         LibMissionStorage.MissionPassCollection storage passCollection = ms.passCollections[collectionId];
 
         if (passCollection.maxUsesPerToken > 0) {
-            uint16 remaining = ms.passUsesRemaining[collectionId][tokenId];
+            LibMissionStorage.PassStatus status = ms.passStatus[collectionId][tokenId];
 
-            // Initialize if first use
-            if (remaining == 0) {
-                // Check if this token was ever used before by looking at a marker
-                // Since we can't easily track "ever used", we initialize on first access
+            // Initialize if first use (Uninitialized status)
+            if (status == LibMissionStorage.PassStatus.Uninitialized) {
                 ms.passUsesRemaining[collectionId][tokenId] = passCollection.maxUsesPerToken;
-                remaining = passCollection.maxUsesPerToken;
+                ms.passStatus[collectionId][tokenId] = LibMissionStorage.PassStatus.Active;
             }
+
+            uint16 remaining = ms.passUsesRemaining[collectionId][tokenId];
 
             if (remaining == 0) {
                 revert MissionPassExhausted(collectionId, tokenId);
             }
 
-            ms.passUsesRemaining[collectionId][tokenId] = remaining - 1;
+            // Decrement remaining uses
+            remaining -= 1;
+            ms.passUsesRemaining[collectionId][tokenId] = remaining;
+
+            // Update status to Exhausted if no uses left
+            if (remaining == 0) {
+                ms.passStatus[collectionId][tokenId] = LibMissionStorage.PassStatus.Exhausted;
+            }
+        }
+
+        // Track delegation usage if not owner
+        if (!isOwner) {
+            LibMissionStorage.PassDelegation storage delegation = ms.passDelegations[collectionId][tokenId];
+            if (delegation.usesAllowed > 0) {
+                delegation.usesConsumed++;
+            }
         }
     }
 
@@ -911,6 +1172,67 @@ contract MissionFacet is AccessControlBase {
 
         // Transfer from treasury using LibFeeCollection pattern
         LibFeeCollection.transferFromTreasury(recipient, amount, "mission_reward");
+    }
+
+    /**
+     * @notice Distribute rewards with revenue share support for lending
+     * @dev Checks if initiator is a borrower with active revenue share delegation
+     * @param initiator Mission initiator (owner or borrower)
+     * @param totalReward Total reward amount
+     * @param passCollectionId Mission Pass collection ID
+     * @param passTokenId Mission Pass token ID
+     */
+    function _distributeRewardsWithRevenueShare(
+        address initiator,
+        uint256 totalReward,
+        uint16 passCollectionId,
+        uint16 passTokenId
+    ) internal {
+        LibMissionStorage.MissionStorage storage ms = LibMissionStorage.missionStorage();
+
+        if (ms.rewardToken == address(0)) {
+            return; // No reward token configured
+        }
+
+        // Check if initiator is a borrower with active revenue share delegation
+        LibMissionStorage.PassDelegation storage delegation = ms.passDelegations[passCollectionId][passTokenId];
+
+        // Revenue share only applies if:
+        // 1. Delegation is active (not expired)
+        // 2. Initiator is the delegatee (borrower)
+        // 3. Revenue share percentage is configured (> 0)
+        if (delegation.delegatee == initiator &&
+            block.timestamp < delegation.expires &&
+            delegation.rewardShareBps > 0) {
+
+            // Calculate lender's share
+            uint256 lenderShare = (totalReward * delegation.rewardShareBps) / 10000;
+            uint256 borrowerShare = totalReward - lenderShare;
+
+            // Add lender share to escrow (will be withdrawn via MissionPassLendingFacet)
+            if (lenderShare > 0) {
+                ms.lendingEscrowBalance[delegation.lender] += lenderShare;
+
+                // Transfer lender share to this contract (escrow)
+                LibFeeCollection.transferFromTreasury(address(this), lenderShare, "mission_reward_lender_share");
+
+                emit LenderRewardShareDeposited(
+                    passCollectionId,
+                    passTokenId,
+                    delegation.lender,
+                    initiator,
+                    lenderShare
+                );
+            }
+
+            // Transfer borrower share directly to borrower
+            if (borrowerShare > 0) {
+                LibFeeCollection.transferFromTreasury(initiator, borrowerShare, "mission_reward_borrower_share");
+            }
+        } else {
+            // No revenue share - full reward to initiator
+            LibFeeCollection.transferFromTreasury(initiator, totalReward, "mission_reward");
+        }
     }
 
     // ============================================================

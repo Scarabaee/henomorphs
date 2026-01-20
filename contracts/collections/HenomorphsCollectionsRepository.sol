@@ -8,7 +8,7 @@ import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.so
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
 import "../interfaces/ICollectionRepository.sol";
-import "../common/CollectionModel.sol";
+import "../libraries/CollectionModel.sol";
 
 /**
  * @notice The implementation of the ICollectionRepository interface holding 

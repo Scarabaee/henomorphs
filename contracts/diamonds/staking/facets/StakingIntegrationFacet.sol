@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
 import {LibStakingStorage} from "../libraries/LibStakingStorage.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {StakedSpecimen, Colony, RewardCalcData} from "../../libraries/StakingModel.sol";
-import {Calibration, ChargeAccessory, PowerMatrix, SpecimenCollection} from "../../libraries/HenomorphsModel.sol";
+import {StakedSpecimen, Colony, RewardCalcData} from "../../../libraries/StakingModel.sol";
+import {Calibration, ChargeAccessory, PowerMatrix, SpecimenCollection} from "../../../libraries/HenomorphsModel.sol";
 import {AccessHelper} from "../libraries/AccessHelper.sol";
 import {IExternalBiopod, IExternalAccessory, 
         IExternalChargepod, ISpecializationFacet, 
         IExternalCollection, IColonyFacet, IChargeFacet} from "../interfaces/IStakingInterfaces.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 
 /**
  * @title StakingIntegrationFacet - Enhanced & Centralized

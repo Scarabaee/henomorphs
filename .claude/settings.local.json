@@ -4,7 +4,10 @@
       "Bash(dir /s \"C:\\\\Users\\\\dariu\\\\Documents\\\\Github\\\\pcs-nft-v4\\\\contracts\")",
       "Bash(tree:*)",
       "Bash(powershell:*)",
-      "Bash(cmd /c \"dir /s /b C:\\\\Users\\\\dariu\\\\Documents\\\\Github\\\\henomorphs\\\\contracts\\\\*.sol 2>nul | find /c \"\".sol\"\"\")"
+      "Bash(cmd /c \"dir /s /b C:\\\\Users\\\\dariu\\\\Documents\\\\Github\\\\henomorphs\\\\contracts\\\\*.sol 2>nul | find /c \"\".sol\"\"\")",
+      "Bash(npx hardhat:*)",
+      "Bash(npm install:*)",
+      "Bash(grep:*)"
     ]
   }
 }

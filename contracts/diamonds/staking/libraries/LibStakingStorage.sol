@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {LibHenomorphsStorage} from "./LibHenomorphsStorage.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
 import {IDiamondLoupe} from "../../shared/interfaces/IDiamondLoupe.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {PodRewardRate, InfusionBonus, StakingFees, StakedSpecimen, 
         InfusedSpecimen, SeasonRewardMultiplier, Colony, 
-        SpecialEvent, ColonyStats, RateLimits, RewardCalcData, InfusionCalcData} from "../../libraries/StakingModel.sol";
-import {SpecimenCollection, Calibration, ColonyCriteria, ChargeAccessory} from "../../libraries/HenomorphsModel.sol";
+        SpecialEvent, ColonyStats, RateLimits, RewardCalcData, InfusionCalcData} from "../../../libraries/StakingModel.sol";
+import {SpecimenCollection, Calibration, ColonyCriteria, ChargeAccessory} from "../../../libraries/HenomorphsModel.sol";
 import {IExternalBiopod, IExternalAccessory, IColonyFacet} from "../interfaces/IStakingInterfaces.sol"; 
 import {RewardCalculator} from "../libraries/RewardCalculator.sol";
 import {LibBiopodIntegration} from "./LibBiopodIntegration.sol";  

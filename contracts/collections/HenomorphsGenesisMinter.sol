@@ -16,7 +16,7 @@ import "../interfaces/IMintableCollection.sol";
 import "../utils/IssueHelper.sol";
 import "../utils/PrivilegedAccess.sol";
 import "../utils/NativePriceQuoter.sol";
-import "../common/MintingModel.sol";
+import "../libraries/MintingModel.sol";
 
 interface ICollectionRepository {
     function getItemInfo(ItemType itemType, uint256 issueId, uint8 tier) external view returns (IssueInfo memory, ItemTier memory);

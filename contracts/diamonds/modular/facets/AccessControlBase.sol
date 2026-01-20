@@ -5,7 +5,7 @@ import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {LibCollectionStorage} from "../libraries/LibCollectionStorage.sol";
 import {AccessHelper} from "../libraries/AccessHelper.sol";
 import {ReentrancyGuard} from "../utils/ReentrancyGuard.sol";  
-import {LibMeta} from "../shared/libraries/LibMeta.sol";
+import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 
 /**
  * @title AccessControlBase

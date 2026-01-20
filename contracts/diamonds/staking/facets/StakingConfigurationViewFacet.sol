@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
 import {LibStakingStorage} from "../libraries/LibStakingStorage.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {PodRewardRate, StakingFees, Colony} from "../../libraries/StakingModel.sol";
-import {ControlFee, SpecimenCollection} from "../../libraries/HenomorphsModel.sol";
+import {PodRewardRate, StakingFees, Colony} from "../../../libraries/StakingModel.sol";
+import {ControlFee, SpecimenCollection} from "../../../libraries/HenomorphsModel.sol";
 import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
 
 /**

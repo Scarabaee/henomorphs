@@ -10,7 +10,7 @@ pragma solidity ^0.8.27;
  */
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {LibPremiumStorage} from "../libraries/LibPremiumStorage.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 
 
 /**

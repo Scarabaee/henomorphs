@@ -5,9 +5,9 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {LibColonyWarsStorage} from "../libraries/LibColonyWarsStorage.sol";
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
-import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {LibFeeCollection} from "../../staking/libraries/LibFeeCollection.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 
 /**
  * @title ColonyWarsConfigFacet

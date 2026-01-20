@@ -2,17 +2,17 @@
 pragma solidity ^0.8.27;
 
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {LibPremiumStorage} from "../libraries/LibPremiumStorage.sol";
+import {LibPremiumStorage} from "../../chargepod/libraries/LibPremiumStorage.sol";
 import {LibStakingStorage} from "../libraries/LibStakingStorage.sol";
-import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {ResourceHelper} from "../libraries/ResourceHelper.sol";
+import {ResourceHelper} from "../../chargepod/libraries/ResourceHelper.sol";
 import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {IExternalBiopod} from "../interfaces/IStakingInterfaces.sol";
-import {Calibration, SpecimenCollection} from "../../libraries/HenomorphsModel.sol";
-import {StakedSpecimen} from "../../libraries/StakingModel.sol";
+import {Calibration, SpecimenCollection} from "../../../libraries/HenomorphsModel.sol";
+import {StakedSpecimen} from "../../../libraries/StakingModel.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**

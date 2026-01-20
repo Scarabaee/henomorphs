@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {StakedSpecimen} from "../../v4.3/henomorphsv1/libraries/StakingModel.sol";
-import {LibStakingStorage} from "../../v4.3/henomorphsv1/collection/libraries/LibStakingStorage.sol";
+import {StakedSpecimen} from "../../libraries/StakingModel.sol";
+import {LibStakingStorage} from "../../diamonds/staking/libraries/LibStakingStorage.sol";
 
 /**
  * @title IStakingIntegration

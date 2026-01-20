@@ -2,7 +2,7 @@
 pragma solidity ^0.8.27;
 
 import {LibDiamond} from "../shared/libraries/LibDiamond.sol";
-import {LibHenomorphsStorage} from "./libraries/LibHenomorphsStorage.sol";
+import {LibHenomorphsStorage} from "../chargepod/libraries/LibHenomorphsStorage.sol";
 import {LibStakingStorage} from "./libraries/LibStakingStorage.sol";
 import {LibMeta} from "../shared/libraries/LibMeta.sol";
 import {IDiamondCut} from "../shared/interfaces/IDiamondCut.sol";

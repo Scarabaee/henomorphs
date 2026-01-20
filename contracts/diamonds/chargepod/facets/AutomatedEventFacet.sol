@@ -4,10 +4,10 @@ pragma solidity ^0.8.27;
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
 import {ActionHelper} from "../libraries/ActionHelper.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 import {ChargeConfigurationControlFacet} from "./ChargeConfigurationControlFacet.sol";
-import {ISeasonFacet} from "../interfaces/IStakingInterfaces.sol";
-import {ChargeSeason} from "../../libraries/HenomorphsModel.sol";
+import {ISeasonFacet} from "../../staking/interfaces/IStakingInterfaces.sol";
+import {ChargeSeason} from "../../../libraries/HenomorphsModel.sol";
 
 
 /**

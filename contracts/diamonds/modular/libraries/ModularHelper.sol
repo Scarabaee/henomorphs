@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import {LibMeta} from "../shared/libraries/LibMeta.sol";
+import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {LibCollectionStorage} from "./LibCollectionStorage.sol";
 
 /**

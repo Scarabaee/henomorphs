@@ -10,10 +10,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
-import {ModularSpecimen} from "../base/ModularSpecimen.sol";
-import {ICollectionDiamond} from "../interfaces/ICollectionDiamond.sol";
-import {TerritorySVGLib} from "../libraries/TerritorySVGLib.sol";
-import {TerritoryMetadataLib} from "../libraries/TerritoryMetadataLib.sol";
+import {ModularSpecimen} from "../../diamonds/modular/base/ModularSpecimen.sol";
+import {ICollectionDiamond} from "../../diamonds/modular/interfaces/ICollectionDiamond.sol";
+import {TerritorySVGLib} from "../../diamonds/modular/libraries/TerritorySVGLib.sol";
+import {TerritoryMetadataLib} from "../../diamonds/modular/libraries/TerritoryMetadataLib.sol";
 
 /**
  * @title ColonyTerritoryCards

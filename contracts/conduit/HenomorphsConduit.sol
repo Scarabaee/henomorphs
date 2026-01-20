@@ -8,10 +8,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "../interfaces/IConduit.sol";
-import "../interfaces/IConduitRedemptionHandler.sol";
-import "../interfaces/IConduitTokenDescriptor.sol";
-import "../interfaces/IConduitMintController.sol";
+import "./interfaces/IConduit.sol";
+import "./interfaces/IConduitRedemptionHandler.sol";
+import "./interfaces/IConduitTokenDescriptor.sol";
+import "./interfaces/IConduitMintController.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
  
 /// @title HenomorphsConduit
@@ -295,12 +295,14 @@ contract HenomorphsConduit is
         }
         
         TokenConfig memory config = tokenConfigs[tokenId];
+        address tokenOwner = _ownerOf(tokenId);
         IConduitTokenDescriptor.TokenMetadata memory metadata = IConduitTokenDescriptor.TokenMetadata({
             tokenId: tokenId,
             coreCount: config.coreCount,
             expiryDate: config.expiryDate,
             isActive: config.isActive,
-            owner: _ownerOf(tokenId)
+            owner: tokenOwner,
+            ownerBalance: balanceOf(tokenOwner)
         });
         
         return IConduitTokenDescriptor(tokenDescriptor).tokenURI(metadata);

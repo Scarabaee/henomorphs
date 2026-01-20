@@ -2,17 +2,17 @@
 pragma solidity ^0.8.27;
 
 import {LibDiamond} from "../../shared/libraries/LibDiamond.sol";
-import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
 import {LibStakingStorage} from "../libraries/LibStakingStorage.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {StakingFees, SeasonRewardMultiplier, SpecialEvent, Colony} from "../../libraries/StakingModel.sol";
-import {ControlFee, SpecimenCollection} from "../../libraries/HenomorphsModel.sol";
+import {StakingFees, SeasonRewardMultiplier, SpecialEvent, Colony} from "../../../libraries/StakingModel.sol";
+import {ControlFee, SpecimenCollection} from "../../../libraries/HenomorphsModel.sol";
 import {AccessHelper} from "../libraries/AccessHelper.sol";
 import {IDiamondLoupe} from "../../shared/interfaces/IDiamondLoupe.sol";
 import {IStakingIntegrationFacet} from "../interfaces/IStakingInterfaces.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
 
 /**

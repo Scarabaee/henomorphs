@@ -5,7 +5,7 @@ import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {LibPremiumStorage} from "../libraries/LibPremiumStorage.sol";
 import {LibResourceStorage} from "../libraries/LibResourceStorage.sol";
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
@@ -295,6 +295,17 @@ contract AchievementRewardFacet is AccessControlBase {
     function _mintNFT(address user, uint256 achievementId, uint8 tier) internal returns (uint256 tokenId) {
         LibPremiumStorage.PremiumStorage storage ps = LibPremiumStorage.premiumStorage();
         if (ps.achievementNFT == address(0)) revert NFTMintFailed(achievementId);
+
+        // Check if user already has this NFT - skip minting if so
+        try IAchievementNFT(ps.achievementNFT).hasAchievement(user, achievementId, tier) returns (bool hasIt) {
+            if (hasIt) {
+                ps.userAchievementRewards[user][achievementId].nftMinted = true;
+                // Return existing tokenId (achievementId << 8 | tier)
+                return (achievementId << 8) | uint256(tier);
+            }
+        } catch {
+            // If check fails, proceed with mint attempt
+        }
 
         tokenId = IAchievementNFT(ps.achievementNFT).mintAchievement(user, achievementId, tier);
         ps.userAchievementRewards[user][achievementId].nftMinted = true;

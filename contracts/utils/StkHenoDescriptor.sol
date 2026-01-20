@@ -3,8 +3,8 @@ pragma solidity ^0.8.27;
 
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
-import {IStkHenoDescriptor} from "../interfaces/IStkHenoDescriptor.sol";
-import {StkHenoSVGBuilder} from "../libraries/StkHenoSVGBuilder.sol";
+import {IStkHenoDescriptor} from "../diamonds/staking/interfaces/IStkHenoDescriptor.sol";
+import {StkHenoSVGBuilder} from "../diamonds/chargepod/libraries/StkHenoSVGBuilder.sol";
 
 /**
  * @title StkHenoDescriptor

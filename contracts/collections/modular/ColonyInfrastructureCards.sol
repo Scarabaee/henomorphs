@@ -9,10 +9,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
-import {ModularSpecimen} from "../base/ModularSpecimen.sol";
-import {ICollectionDiamond} from "../interfaces/ICollectionDiamond.sol";
-import {InfrastructureSVGLib} from "../libraries/InfrastructureSVGLib.sol";
-import {InfrastructureMetadataLib} from "../libraries/InfrastructureMetadataLib.sol";
+import {ModularSpecimen} from "../../diamonds/modular/base/ModularSpecimen.sol";
+import {ICollectionDiamond} from "../../diamonds/modular/interfaces/ICollectionDiamond.sol";
+import {InfrastructureSVGLib} from "../../diamonds/modular/libraries/InfrastructureSVGLib.sol";
+import {InfrastructureMetadataLib} from "../../diamonds/modular/libraries/InfrastructureMetadataLib.sol";
 
 /**
  * @title ColonyInfrastructureCards

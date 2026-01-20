@@ -4,9 +4,9 @@ pragma solidity ^0.8.27;
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibTraitPackHelper} from "../libraries/LibTraitPackHelper.sol";
 import {LibAccessoryHelper} from "../libraries/LibAccessoryHelper.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
-import {ChargeAccessory, PowerMatrix} from "../../libraries/HenomorphsModel.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
+import {ChargeAccessory, PowerMatrix} from "../../../libraries/HenomorphsModel.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 
 /**
  * @title BonusValidationFacet

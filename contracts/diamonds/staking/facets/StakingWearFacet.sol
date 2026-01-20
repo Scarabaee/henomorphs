@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
 import {LibStakingStorage} from "../libraries/LibStakingStorage.sol";
 import {LibBiopodIntegration} from "../libraries/LibBiopodIntegration.sol";
 import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {StakedSpecimen, ControlFee} from "../../libraries/StakingModel.sol";
-import {Calibration, SpecimenCollection, ChargeAccessory} from "../../libraries/HenomorphsModel.sol";
+import {StakedSpecimen, ControlFee} from "../../../libraries/StakingModel.sol";
+import {Calibration, SpecimenCollection, ChargeAccessory} from "../../../libraries/HenomorphsModel.sol";
 import {AccessHelper} from "../libraries/AccessHelper.sol";
 import {IExternalBiopod, IExternalAccessory, IExternalCollection} from "../interfaces/IStakingInterfaces.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**

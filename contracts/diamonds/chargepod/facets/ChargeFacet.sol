@@ -6,18 +6,18 @@ import {LibColonyWarsStorage} from "../libraries/LibColonyWarsStorage.sol";
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
 import {ActionHelper} from "../libraries/ActionHelper.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {ChargeCalculator} from "../libraries/ChargeCalculator.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import {ControlFee, Calibration, SpecimenCollection, PowerMatrix, ChargeActionType, ChargeAccessory} from "../../libraries/HenomorphsModel.sol";
-import {UserEngagement, DailyChallengeSet, DailyChallenge, FlashEvent, FlashParticipation} from "../../libraries/GamingModel.sol";
-import {ISpecimenBiopod} from "../../interfaces/ISpecimenBiopod.sol";
-import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {ColonyHelper} from "../libraries/ColonyHelper.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
-import {IExternalCollection, IRankingFacet, ISpecializationEvolution, IStakingSystem} from "../interfaces/IStakingInterfaces.sol";
+import {ControlFee, Calibration, SpecimenCollection, PowerMatrix, ChargeActionType, ChargeAccessory} from "../../../libraries/HenomorphsModel.sol";
+import {UserEngagement, DailyChallengeSet, DailyChallenge, FlashEvent, FlashParticipation} from "../../../libraries/GamingModel.sol";
+import {ISpecimenBiopod} from "../../../interfaces/ISpecimenBiopod.sol";
+import {AccessHelper} from "../../staking/libraries/AccessHelper.sol";
+import {ColonyHelper} from "../../staking/libraries/ColonyHelper.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {LibFeeCollection} from "../../staking/libraries/LibFeeCollection.sol";
+import {IExternalCollection, IRankingFacet, ISpecializationEvolution, IStakingSystem} from "../../staking/interfaces/IStakingInterfaces.sol";
 
 /**
  * @title ChargeFacet

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.27;
 
-import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
-import {LibDiamond} from "../../shared/libraries/LibDiamond.sol";
-import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {AccessHelper} from "../libraries/AccessHelper.sol";
+import {LibHenomorphsStorage} from "../../chargepod/libraries/LibHenomorphsStorage.sol";
+import {LibDiamond} from "../../../diamonds/shared/libraries/LibDiamond.sol";
+import {LibMeta} from "../../../diamonds/shared/libraries/LibMeta.sol";
+import {AccessHelper} from "../../staking/libraries/AccessHelper.sol";
 import {AccessControlBase} from "./AccessControlBase.sol";
 
 /**

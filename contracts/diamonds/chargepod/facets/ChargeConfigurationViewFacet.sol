@@ -4,7 +4,7 @@ pragma solidity ^0.8.27;
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibGamingStorage} from "../libraries/LibGamingStorage.sol";
 import {LibColonyWarsStorage} from "../libraries/LibColonyWarsStorage.sol";
-import {ChargeSettings, ChargeFees, ChargeActionType, ChargeSeason, ControlFee} from "../../libraries/HenomorphsModel.sol";
+import {ChargeSettings, ChargeFees, ChargeActionType, ChargeSeason, ControlFee} from "../../../libraries/HenomorphsModel.sol";
 
 /**
  * @title ChargeConfigurationViewFacet

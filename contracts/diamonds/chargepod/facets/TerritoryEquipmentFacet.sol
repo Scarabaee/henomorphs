@@ -3,8 +3,8 @@ pragma solidity ^0.8.27;
 
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import { LibColonyWarsStorage } from "../libraries/LibColonyWarsStorage.sol";
-import { AccessControlBase } from "./AccessControlBase.sol";
-import { IColonyInfrastructureCards } from "../interfaces/IColonyInfrastructureCards.sol";
+import { AccessControlBase } from "../../common/facets/AccessControlBase.sol";
+import { IColonyInfrastructureCards } from "../../staking/interfaces/IColonyInfrastructureCards.sol";
 import { ResourceHelper } from "../libraries/ResourceHelper.sol";
 
 /**

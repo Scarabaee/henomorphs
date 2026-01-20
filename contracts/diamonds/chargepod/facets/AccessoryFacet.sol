@@ -3,18 +3,18 @@ pragma solidity ^0.8.27;
 
 import {LibHenomorphsStorage} from "../libraries/LibHenomorphsStorage.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
-import {PodsUtils} from "../../libraries/PodsUtils.sol";
+import {PodsUtils} from "../../../libraries/PodsUtils.sol";
 import {LibTraitPackHelper} from "../libraries/LibTraitPackHelper.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import {AccessHelper} from "../libraries/AccessHelper.sol";
-import {ControlFee, ChargeAccessory, SpecimenCollection, PowerMatrix, AccessoryTypeInfo, TraitPackEquipment} from "../../libraries/HenomorphsModel.sol";
-import {AccessControlBase} from "./AccessControlBase.sol";
-import {LibFeeCollection} from "../libraries/LibFeeCollection.sol";
+import {AccessHelper} from "../../staking/libraries/AccessHelper.sol";
+import {ControlFee, ChargeAccessory, SpecimenCollection, PowerMatrix, AccessoryTypeInfo, TraitPackEquipment} from "../../../libraries/HenomorphsModel.sol";
+import {AccessControlBase} from "../../common/facets/AccessControlBase.sol";
+import {LibFeeCollection} from "../../staking/libraries/LibFeeCollection.sol";
 import {LibAccessoryHelper} from "../libraries/LibAccessoryHelper.sol";
-import {IExternalCollection, IColonyFacet, IChargeFacet} from "../interfaces/IStakingInterfaces.sol";
+import {IExternalCollection, IColonyFacet, IChargeFacet} from "../../staking/interfaces/IStakingInterfaces.sol";
 import {ICollectionDiamond} from "../../modular/interfaces/ICollectionDiamond.sol";
-import {LibBiopodIntegration} from "../libraries/LibBiopodIntegration.sol";
+import {LibBiopodIntegration} from "../../staking/libraries/LibBiopodIntegration.sol";
 
 /**
  * @title AccessoryFacet
